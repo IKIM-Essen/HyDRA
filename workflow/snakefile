@@ -1,0 +1,46 @@
+configfile: "config/config.yaml"
+
+pepfile: config["pepfile"]
+
+include: "rules/common.smk"
+include: "rules/ONT_preprocessing.smk"
+include: "rules/Ill_preprocessing.smk"
+include: "rules/assembly.smk"
+include: "rules/assembly_qc.smk"
+include: "rules/analysis.smk"
+
+rule all:
+    input:
+        #expand("results/reports/pycoqc/{run}.html", run=get_all_ont_runs()),
+        expand("results/reports/before_trim/all_reports/{strain}_{lane}_{read}_fastqc.html", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids()),
+        expand("results/reports/{stage}/all_reports/{strain}_{stage}_nanoQC.html", strain=get_all_strain_ids(), stage=get_all_stages()),#get_all_stages())
+        #expand("results/reports/trimmed/fastqc/{strain}/{strain}_{read}_trimmed_fastqc.html", strain=get_all_strain_ids(), read=get_all_read_ids()),
+        "results/reports/trimmed/all_reports/ill_coverages.txt",
+        "results/reports/trimmed/all_reports/ont_coverages.txt",
+        #expand("results/reports/assembly/quast/{strain}_spades/report.txt", strain=get_all_strain_ids()),
+        #expand("results/reports/assembly/quast/{strain}_uni/report.txt", strain=get_all_strain_ids()),
+        #expand("results/reports/assembly/checkm/{strain}_uni/lineage.ms", strain=get_all_strain_ids()),
+        #expand("results/reports/assembly/checkm/{strain}_canu/lineage.ms", strain=get_all_strain_ids())
+        #expand("results/pilon/{strain}/{strain}.fasta", strain=get_all_strain_ids())
+        #expand("results/medaka/{strain}_list_models.txt", strain=get_all_strain_ids())
+        #expand("results/reports/assembly/checkm/{strain}/lineage.ms", strain=get_all_strain_ids()),
+        #expand("results/analysis/prokka/{strain}/{strain}.gff", strain=get_all_strain_ids()),
+        #expand("results/analysis/abricate/{strain}/{strain}_summary.txt", strain=get_all_strain_ids())
+
+
+"""
+
+expand("results/reports/assembly/quast/{strain}_spades/report.txt", strain=get_all_strain_ids()),
+        expand("results/reports/assembly/quast/{strain}_{assembler}/report.txt", strain=get_all_strain_ids(), assembler=["spades", "uni"]),
+        expand("results/reports/assembly/checkm/{strain}_{assembler}/lineage.ms", strain=get_all_strain_ids(), assembler=["spades", "uni"])
+
+
+expand("results/reports/fastqc/{strain}_{lane}_{read}_trimmed_fastqc.html",strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids())
+
+include: "rules/assembly.smk"
+expand("results/reports/fastqc/{strain}_{lane}_{read}_trimmed_fastqc.html",strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids())
+
+expand("results/{id}/trycycler/assemblies", id=get_all_ids()),
+
+        expand("results/{id}/trycycler/clusters", id=get_all_ids())
+"""

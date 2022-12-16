@@ -1,0 +1,11 @@
+*.log
+data/*
+results/*
+old_filter_results/*
+renameForTest_results/*
+dedup_test/*
+.snakemake/*
+ressources/*
+workflow/old_scripts/*
+workflow/scripts/coverage.py
+config/pep/documents.csv

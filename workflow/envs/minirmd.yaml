@@ -1,0 +1,4 @@
+channels:
+  - bioconda
+dependencies:
+  - minirmd = 1.1

@@ -1,0 +1,5 @@
+channels:
+  - bioconda
+dependencies:
+  - canu = 2.2
+  - gnuplot = 5.4.3
