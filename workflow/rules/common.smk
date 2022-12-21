@@ -1,4 +1,5 @@
 import pandas as pd
+import glob
 
 configfile: "config/config.yaml"
 
@@ -48,7 +49,7 @@ def get_ont_quality_filter(wildcards):
         quality = "15"
         return quality
 
-def get_reads_by_stage(wildcards):
+def get_ONT_reads_by_stage(wildcards):
     if wildcards.stage == stages[0]:
         return "data/ont/{strain}.fastq.gz"
     elif wildcards.stage == stages[1]:
@@ -60,12 +61,18 @@ def get_filtered_reads_by_stage(wildcards):
     elif wildcards.stage == stages[1]:
         return "results/nanofilt/{stage}/{strain}_{stage}.fastq.gz"
 
-def get_Illread1_by_lane(wildcards):
+def get_ill_reads_by_stage(wildcards):
+    if wildcards.stage == stages[0]:
+        return "data/illumina/{strain}_{lane}_{read}.fastq.gz"
+    elif wildcards.stage == stages[1]:
+        return  "results/preprocess_ill/{strain}/{strain}_{read}_trimmed.fastq.gz"
+
+def get_ill_read1_by_lane(wildcards):
     path = pep.sample_table.loc[wildcards.strain][["illumina_read"]]
     read_path = path + "{strain}_{lane}_R1.fastq"
     return read_path
 
-def get_Illread2_by_lane(wildcards):
+def get_ill_read2_by_lane(wildcards):
     path = pep.sample_table.loc[wildcards.strain][["illumina_read"]]
     read_path = path + "{strain}_{lane}_R2.fastq"
     return read_path
@@ -74,7 +81,7 @@ def get_summaryfile_by_run(wildcards):
     if wildcards.run == ont_runs[0]:
         return "/projects/seqlab/GridIONs/20210713_JW001_KID1-3_Ec_ZKB_NBD104/20210713_JW001_KID1-3_Ec_ZKB_NBD104/20210713_1530_X2_FAP91220_d47f932e/sequencing_summary_FAP91220_e888cbe6.txt"
     elif wildcards.run == ont_runs[1]:
-        return "/projects/seqlab/GridIONs/SM0006_JW0002_CefRes_strains_20211115/SM0006_JW0002_CefRes_strains_20211115/20211115_1648_X1_FAP91415_d0c3f758/sequencing_summary_FAP91415_f2d1671c.txt"
+        return "/projects/seqlab/GridIONs/20211115_SM0006_JW0002_CefRes_strains_20211115/SM0006_JW0002_CefRes_strains_20211115/20211115_1648_X1_FAP91415_d0c3f758/sequencing_summary_FAP91415_f2d1671c.txt"
 
 """
 if wildcards.lane == lanes[0]:

@@ -3,7 +3,7 @@ data/*
 results/*
 old_filter_results/*
 renameForTest_results/*
-dedup_test/*
+multiqc_test/*
 .snakemake/*
 ressources/*
 workflow/old_scripts/*

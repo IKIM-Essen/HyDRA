@@ -1,16 +1,5 @@
-rule pycoqc:
-    input:
-        get_summaryfile_by_run
-    output:
-        "results/reports/pycoqc/{run}.html"
-    log:
-        "logs/pycoqc/{run}.log"
-    conda:
-        "../envs/pycoqc.yaml"
-    shell:
-        "pycoQC -f {input} -o {output} > {log} 2>&1"
    
-rule combine_nanopore_fastqs:
+rule combine_ont_fastqs:
     input:
         get_nanopore_reads
     output:
@@ -19,47 +8,6 @@ rule combine_nanopore_fastqs:
         "logs/com_ont_fastqs/{strain}.log"
     script:
         "../scripts/combine_ont_fastqs.py"
-
-rule nanoQC:
-    input:
-        get_reads_by_stage
-    output:
-        "results/reports/{stage}/nanoqc/{strain}/nanoQC.html"
-    params:
-        "results/reports/{stage}/nanoqc/{strain}/"
-    log:
-        "logs/nanoqc/{strain}_{stage}.log"
-    conda:
-        "../envs/nanoqc.yaml"
-    shell:
-        "mkdir -p {params} && "
-        "nanoQC -o {params} {input} > {log} 2>&1"
-
-rule NanoPlot:
-    input:
-        get_reads_by_stage
-    output:
-        "results/reports/{stage}/nanoplot/{strain}/NanoPlot-report.html",
-        "results/reports/{stage}/nanoplot/{strain}/NanoStats.txt"
-    params:
-        "results/reports/{stage}/nanoplot/{strain}/"
-    log:
-        "logs/nanoplot/{strain}_{stage}.log"
-    conda:
-        "../envs/nanoplot.yaml"
-    shell:
-        "NanoPlot --fastq {input} --outdir {params} > {log} 2>&1"
-
-rule rename_reports:
-    input:
-        nanoplot = "results/reports/{stage}/nanoplot/{strain}/NanoPlot-report.html",
-        nanoqc = "results/reports/{stage}/nanoqc/{strain}/nanoQC.html"
-    output:
-        nanoplot = "results/reports/{stage}/all_reports/{strain}_{stage}_NanoPlot-report.html",
-        nanoqc = "results/reports/{stage}/all_reports/{strain}_{stage}_nanoQC.html"
-    shell:
-        "cp {input.nanoplot} {output.nanoplot} && "
-        "cp {input.nanoqc} {output.nanoqc}"
 
 rule nanofilt_lite:
     input:
