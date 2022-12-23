@@ -47,7 +47,7 @@ rule gzip:
     shell:
         "gzip {input}"
 
-rule nanofilt:
+use rule nanofilt_lite as nanofilt with:
     input:
         "results/porechop/{strain}_{stage}.fastq.gz"
     params:
@@ -57,12 +57,6 @@ rule nanofilt:
         "results/nanofilt/{stage}/{strain}_{stage}.fastq.gz"
     log:
         "logs/nanofilt/{strain}_{stage}.log"
-    conda:
-        "../envs/nanofilt.yaml"
-    shell:
-        "gunzip -c {input} | "
-        "NanoFilt -q {params.quality} -l {params.length} | "
-        "gzip > {output} 2> {log}"
 
 rule coverage_ont:
     input:

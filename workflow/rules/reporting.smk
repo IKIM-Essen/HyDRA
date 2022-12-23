@@ -11,15 +11,11 @@ rule multiqc_before_trim:
     wrapper:
         "v1.21.0/bio/multiqc"
 
-rule multiqc_trimmed:
+use rule multiqc_before_trim as multiqc_trimmed with:
     input:
         nanostats = expand("results/reports/trimmed/{strain}_trimmed_NanoStats.txt", strain=get_all_strain_ids()),
         fastqc_t = expand("results/reports/trimmed/{strain}_{read}_fastqc.zip", strain=get_all_strain_ids(), read=get_all_read_ids())
     output:
         "results/reports/multiqc/trimmed_multiqc.html"
-    params:
-        extra=""  # Optional: extra parameters for multiqc.
     log:
         "logs/multiqc/trimmed.log"
-    wrapper:
-        "v1.21.0/bio/multiqc"
