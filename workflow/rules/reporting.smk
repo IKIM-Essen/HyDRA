@@ -3,7 +3,7 @@ rule multiqc_before_trim:
         nanostats = expand("results/reports/before_trim/{strain}_before_trim_NanoStats.txt", strain=get_all_strain_ids()),
         fastqc_bt = expand("results/reports/before_trim/{strain}_{lane}_{read}_fastqc.zip", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids())
     output:
-        "results/reports/multiqc/before_trim_multiqc.html"
+        report("results/reports/multiqc/before_trim_multiqc.html", caption="../report/before_trim_multiqc.rst", category="before_trim")
     params:
         extra=""  # Optional: extra parameters for multiqc.
     log:

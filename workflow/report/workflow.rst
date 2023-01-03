@@ -1,0 +1,1 @@
+for genome assembly of bacterial isolates and resistance analysis

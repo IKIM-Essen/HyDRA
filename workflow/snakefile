@@ -2,6 +2,8 @@ configfile: "config/config.yaml"
 
 pepfile: config["pepfile"]
 
+report: "report/workflow.rst"
+
 include: "rules/common.smk"
 include: "rules/ont_preprocessing.smk"
 include: "rules/ont_reporting.smk"
