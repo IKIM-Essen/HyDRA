@@ -5,6 +5,7 @@ configfile: "config/config.yaml"
 
 samples = pd.read_csv("config/pep/documents.csv").set_index("sample_name", drop=False)
 samples.index.names = ["sample_name"]
+ill_data_path = config["ill_data_path"]
 stages = ["before_trim", "trimmed"]
 lanes = ["L001","L002"]
 read_ids = ["R1","R2"]
@@ -55,26 +56,19 @@ def get_ont_reads_by_stage(wildcards):
     elif wildcards.stage == stages[1]:
         return "results/nanofilt/{stage}/{strain}_{stage}.fastq.gz"
 
-def get_filtered_reads_by_stage(wildcards):
-    if wildcards.stage == stages[0]:
-        return "data/ont/{strain}.fastq.gz"
-    elif wildcards.stage == stages[1]:
-        return "results/nanofilt/{stage}/{strain}_{stage}.fastq.gz"
-
 def get_ill_reads_by_stage(wildcards):
     if wildcards.stage == stages[0]:
-        return "data/illumina/{strain}_{lane}_{read}.fastq.gz"
+        read_path = ill_data_path + "{strain}_{lane}_{read}.fastq.gz"
+        return read_path
     elif wildcards.stage == stages[1]:
         return  "results/preprocess_ill/{strain}/{strain}_{read}_trimmed.fastq.gz"
 
-def get_ill_read1_by_lane(wildcards):
-    path = pep.sample_table.loc[wildcards.strain][["illumina_read"]]
-    read_path = path + "{strain}_{lane}_R1.fastq"
+def get_ill_rawR1(wildcards):
+    read_path = ill_data_path + "{strain}_{lane}_R1.fastq.gz"
     return read_path
 
-def get_ill_read2_by_lane(wildcards):
-    path = pep.sample_table.loc[wildcards.strain][["illumina_read"]]
-    read_path = path + "{strain}_{lane}_R2.fastq"
+def get_ill_rawR2(wildcards):
+    read_path = ill_data_path + "{strain}_{lane}_R2.fastq.gz"
     return read_path
 
 def get_summaryfile_by_run(wildcards):

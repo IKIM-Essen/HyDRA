@@ -1,4 +1,4 @@
 channels:
   - bioconda
 dependencies:
-  - fastx_toolkit = 0.0.14
+  - fastq-filter = 0.3.0

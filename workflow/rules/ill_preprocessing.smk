@@ -1,36 +1,67 @@
 from pathlib import Path
 
-## first filter to ensure to only work with reads with a minimal quality of q=26
-## for minimum p=90% of the bases
-rule qfilter:
+## faster than old script and removes more
+rule fastq_filter:
     input:
-        fastq1 = get_ill_read1_by_lane,
-        fastq2 = get_ill_read2_by_lane
+        r1 = get_ill_rawR1,
+        r2 = get_ill_rawR2#("R2")
     output:
-        fastq1_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq",
-        fastq2_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq",
-        unpaired = "results/preprocess_ill/{strain}/{strain}_{lane}_unpaired.fastq"
+        r1_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq.gz",
+        r2_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq.gz"
     params:
-        q = "26",
-        p = "90" 
+        # mean quality; also possible to filter by median quality
+        quality = 26
     log:
-        "logs/qfilter/{strain}_{lane}.log"
+        "log/fastq_filter/{strain}_{lane}.log"
     conda:
-        "../envs/fastx_toolkit.yaml"
-    script:
-        "../scripts/qfiltering.py"
+        "../envs/fastq_filter.yaml"
+    shell:
+        "fastq-filter -q {params.quality} -o {output.r1_filt} -o {output.r2_filt} {input.r1} {input.r2} "
+        "2> {log}"
 
+rule cutadapt:
+    input:
+        ["results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq.gz", "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq.gz"]
+        #["results/preprocess_ill/{strain}/{strain}_{lane}_R1_dedup.fastq", "results/preprocess_ill/{strain}/{strain}_{lane}_R2_dedup.fastq"]
+    output:
+        fastq1="results/preprocess_ill/{strain}/{strain}_{lane}_R1_trimmed.fastq.gz",
+        fastq2="results/preprocess_ill/{strain}/{strain}_{lane}_R2_trimmed.fastq.gz",
+        qc="results/preprocess_ill/{strain}/{strain}_{lane}.qc.txt"
+    params:
+        adapters= "-a CTGTCTCTTATACACATCT -A CTGTCTCTTATACACATCT", #lambda adapt: -a \"G{20}\" -A \"G{20}\"
+        #maybe quality of 27 is better (cause of quality trimming algorithm)
+        extra="--nextseq-trim=27 -q 27,27 -u 15 -U 15 --minimum-length 65"  #27 -q 27,27
+    log:
+        "logs/cutadapt/{strain}_{lane}.log"
+    threads: 4
+    wrapper:
+        "v0.80.1/bio/cutadapt/pe"
+
+rule combine_lanes:
+    input:
+        l1 = "results/preprocess_ill/{strain}/{strain}_L001_{read}_trimmed.fastq.gz",
+        l2 = "results/preprocess_ill/{strain}/{strain}_L002_{read}_trimmed.fastq.gz"
+    output:
+        "results/preprocess_ill/{strain}/{strain}_{read}.fastq.gz"
+    #params:
+        #fastq_out = "results/preprocess_ill/{strain}/{strain}_{read}_trimmed.fastq"
+    shell:
+        "cat {input.l1} {input.l2} > {output}"
+        #{params.fastq_out} && ""gzip {params.fastq_out}"
+
+## still some duplicates in R2..
 rule deduplicate:
     input:
-        fastq1 = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq",
-        fastq2 = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq"
+        r1 = "results/preprocess_ill/{strain}/{strain}_R1.fastq.gz",
+        r2 = "results/preprocess_ill/{strain}/{strain}_R2.fastq.gz"
     output:
-        fastq1_dedup = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_dedup.fastq",
-        fastq2_dedup = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_dedup.fastq"
+        r1_dedup = "results/preprocess_ill/{strain}/{strain}_R1_trimmed.fastq.gz",
+        r2_dedup = "results/preprocess_ill/{strain}/{strain}_R2_trimmed.fastq.gz"
     log:
-        "logs/deduplicate/{strain}_{lane}.log"
+        "logs/deduplicate/{strain}.log"
     script:
         "../scripts/deduplication.py"
+
 
 """
 rule cutadapt:
@@ -67,35 +98,6 @@ rule cutadapt_impro:
         "v0.80.1/bio/cutadapt/pe"
 
 """
-rule cutadapt:
-    input:
-        ["results/preprocess_ill/{strain}/{strain}_{lane}_R1_dedup.fastq", "results/preprocess_ill/{strain}/{strain}_{lane}_R2_dedup.fastq"]
-    output:
-        fastq1="results/preprocess_ill/{strain}/{strain}_{lane}_R1_trimmed.fastq",
-        fastq2="results/preprocess_ill/{strain}/{strain}_{lane}_R2_trimmed.fastq",
-        qc="results/preprocess_ill/{strain}/{strain}_{lane}.qc.txt"
-    params:
-        adapters= "-a CTGTCTCTTATACACATCT -A CTGTCTCTTATACACATCT", #lambda adapt: -a \"G{20}\" -A \"G{20}\"
-        #maybe quality of 27 is better (cause of quality trimming algorithm)
-        extra="--nextseq-trim=27 -q 27,27 -u 15 -U 15 --minimum-length 65"  #27 -q 27,27
-    log:
-        "logs/cutadapt/{strain}_{lane}.log"
-    threads: 4
-    wrapper:
-        "v0.80.1/bio/cutadapt/pe"
-
-rule combine_lanes:
-    input:
-        l1 = "results/preprocess_ill/{strain}/{strain}_L001_{read}_trimmed.fastq",
-        l2 = "results/preprocess_ill/{strain}/{strain}_L002_{read}_trimmed.fastq"
-    output:
-        "results/preprocess_ill/{strain}/{strain}_{read}_trimmed.fastq.gz"
-    params:
-        fastq_out = "results/preprocess_ill/{strain}/{strain}_{read}_trimmed.fastq"
-    shell:
-        "cat {input.l1} {input.l2} > {params.fastq_out} && "
-        "gzip {params.fastq_out}"
-
 ## überflüssig?
 rule extract_fastqc_summary:
     input:
