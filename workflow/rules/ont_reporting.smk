@@ -8,11 +8,11 @@ rule pycoqc:
     conda:
         "../envs/pycoqc.yaml"
     shell:
-        "pycoQC -f {input} -o {output} > {log} 2>&1"
+        "pycoQC -f {input} -o {output} 2> {log}"#" 2>&1"
 
 rule nanoQC:
     input:
-        get_ONT_reads_by_stage
+        get_ont_reads_by_stage
     output:
         html = "results/reports/{stage}/{strain}/nanoQC.html",
         log = "results/reports/{stage}/{strain}/NanoQC.log"
@@ -27,7 +27,7 @@ rule nanoQC:
 
 rule NanoPlot:
     input:
-        get_ONT_reads_by_stage
+        get_ont_reads_by_stage
     output:
         html = "results/reports/{stage}/{strain}/{strain}_NanoPlot-report.html",
         txt = "results/reports/{stage}/{strain}/{strain}_NanoStats.txt"
@@ -39,7 +39,7 @@ rule NanoPlot:
     conda:
         "../envs/nanoplot.yaml"
     shell:
-        "NanoPlot --fastq {input} --prefix {params.prefix} --verbose --outdir {params.outdir} > {log} 2>&1"
+        "NanoPlot --fastq {input} --prefix {params.prefix} --verbose --outdir {params.outdir} 2> {log}"#" 2>&1"
 
 rule rename_ont_reports:
     input:

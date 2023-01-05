@@ -23,22 +23,22 @@ rule nanofilt_lite:
         "../envs/nanofilt.yaml"
     shell:
         "gunzip -c {input} | "
-        "NanoFilt -q {params.quality} -l {params.length} | "
-        "gzip > {output} 2> {log}"
+        "NanoFilt -q {params.quality} -l {params.length} --logfile {log} | "
+        "gzip > {output}"
 
 rule porechop:
     input:
         "results/nanofilt/before_trim/{strain}_flite.fastq.gz"
     output:
         #must be a file not a folder
-        "results/porechop/{strain}_{stage}.fastq"
+        "results/porechop/{strain}_{stage}.fastq.gz"
     log:
         "logs/porechop/{strain}_{stage}.log"
     conda:
         "../envs/porechop.yaml"
     shell:
-        "porechop -i {input} -o {output} > {log} 2>&1"
-
+        "porechop -i {input} -o {output} 2> {log}"
+"""
 rule gzip:
     input:
         "results/porechop/{strain}_{stage}.fastq"
@@ -46,12 +46,12 @@ rule gzip:
         "results/porechop/{strain}_{stage}.fastq.gz"
     shell:
         "gzip {input}"
-
+"""
 use rule nanofilt_lite as nanofilt with:
     input:
         "results/porechop/{strain}_{stage}.fastq.gz"
     params:
-        length = "8000", #8000
+        length = "8000",
         quality = get_ont_quality_filter
     output:
         "results/nanofilt/{stage}/{strain}_{stage}.fastq.gz"

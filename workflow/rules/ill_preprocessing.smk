@@ -1,32 +1,37 @@
 from pathlib import Path
-"""
-rule minirmd:
-    input:
-        fastq1 = get_Illread1_by_lane,
-        fastq2 = get_Illread2_by_lane
-    output:
-        "results/minirmd/{strain}_{lane}_1","results/minirmd/{strain}_{lane}_2"
-    params:
-        d = "2", #mismatch_number
-        gen_outfile = "results/minirmd/{strain}_{lane}"
-    log:
-        "logs/minirmd/{strain}_{lane}.log"
-    conda:
-        "../envs/minirmd.yaml"
-    shell:
-        "minirmd -i {input.fastq1} -f {input.fastq2} -o {params.gen_outfile} -d {params.d} > {log} 2>&1"
 
-rule minirmd_renaming:
+## first filter to ensure to only work with reads with a minimal quality of q=26
+## for minimum p=90% of the bases
+rule qfilter:
     input:
-        fastq1 = "results/minirmd/{strain}_{lane}_1",
-        fastq2 = "results/minirmd/{strain}_{lane}_2"
+        fastq1 = get_ill_read1_by_lane,
+        fastq2 = get_ill_read2_by_lane
     output:
-        fastq1="results/minirmd/{strain}_{lane}_R1_uniq.fastq",
-        fastq2="results/minirmd/{strain}_{lane}_R2_uniq.fastq"
-    shell:
-        "mv {input.fastq1} {output.fastq1} && "
-        "mv {input.fastq2} {output.fastq2}"
-"""
+        fastq1_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq",
+        fastq2_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq",
+        unpaired = "results/preprocess_ill/{strain}/{strain}_{lane}_unpaired.fastq"
+    params:
+        q = "26",
+        p = "90" 
+    log:
+        "logs/qfilter/{strain}_{lane}.log"
+    conda:
+        "../envs/fastx_toolkit.yaml"
+    script:
+        "../scripts/qfiltering.py"
+
+rule deduplicate:
+    input:
+        fastq1 = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq",
+        fastq2 = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq"
+    output:
+        fastq1_dedup = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_dedup.fastq",
+        fastq2_dedup = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_dedup.fastq"
+    log:
+        "logs/deduplicate/{strain}_{lane}.log"
+    script:
+        "../scripts/deduplication.py"
+
 """
 rule cutadapt:
     input:
@@ -62,37 +67,6 @@ rule cutadapt_impro:
         "v0.80.1/bio/cutadapt/pe"
 
 """
-
-rule qfilter:
-    input:
-        fastq1 = get_ill_read1_by_lane,
-        fastq2 = get_ill_read2_by_lane
-    output:
-        fastq1_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq",
-        fastq2_filt = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq",
-        unpaired = "results/preprocess_ill/{strain}/{strain}_{lane}_unpaired.fastq"
-    params:
-        q = "26",
-        p = "90" 
-    log:
-        "logs/qfilter/{strain}_{lane}.log"
-    conda:
-        "../envs/fastx_toolkit.yaml"
-    script:
-        "../scripts/qfiltering.py"
-
-rule deduplicate:
-    input:
-        fastq1 = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_filtered.fastq",
-        fastq2 = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_filtered.fastq"
-    output:
-        fastq1_dedup = "results/preprocess_ill/{strain}/{strain}_{lane}_R1_dedup.fastq",
-        fastq2_dedup = "results/preprocess_ill/{strain}/{strain}_{lane}_R2_dedup.fastq"
-    log:
-        "logs/deduplicate/{strain}_{lane}.log"
-    script:
-        "../scripts/deduplication.py"
-
 rule cutadapt:
     input:
         ["results/preprocess_ill/{strain}/{strain}_{lane}_R1_dedup.fastq", "results/preprocess_ill/{strain}/{strain}_{lane}_R2_dedup.fastq"]
@@ -122,11 +96,12 @@ rule combine_lanes:
         "cat {input.l1} {input.l2} > {params.fastq_out} && "
         "gzip {params.fastq_out}"
 
+## überflüssig?
 rule extract_fastqc_summary:
     input:
-        zip = "results/reports/trimmed/fastqc/{strain}/{strain}_{read}_trimmed_fastqc.zip"
+        zip = "results/reports/trimmed/{strain}_{read}_fastqc.zip"
     output:
-        "results/reports/trimmed/fastqc/{strain}/{strain}_{read}_fastqc_data.txt"
+        "results/reports/trimmed/{strain}_{read}_fastqc_data.txt"
     params:
         outdir = lambda wildcards, input: Path(input.zip).parent,
         zipdir = "results/reports/trimmed/fastqc/{strain}/{strain}_{read}_trimmed_fastqc/"

@@ -1,16 +1,10 @@
-"""
-quality = 26 #snakemake.params.q
-percentage = 80 #snakemake.params.p
-inputfile1 = "data/illumina/13_L002_R1.fastq" #snakemake.input.fastq1
-inputfile2 = "data/illumina/13_L002_R2.fastq" #snakemake.input.fastq2
-filtered1 = "results/preprocess_ill/13/13_L002_R1_filtered.fastq" #snakemake.output.fastq1_filt
-filtered2 = "results/preprocess_ill/13/13_L002_R2_filtered.fastq" #snakemake.output.fastq2_filt
-unpairedfile = "results/preprocess_ill/13/13_L002_unpaired.fastq" #snakemake.output.unpaired
-"""
 import os
 
-def qfiltering(quality, percentage, inputfile, outputfile, logfile):
-    os.system(f"fastq_quality_filter -q {quality} -p {percentage} -i {inputfile} -o {outputfile} > {logfile} 2>&1")
+## filter by minimum quality on minimum percentage of a read
+def qfiltering(quality, percentage, inputfile, outputfile, logpath):
+    os.system(f"fastq_quality_filter -q {quality} -p {percentage} -i {inputfile} -o {outputfile} -v 2> {logpath}")#2>&1
+
+## functions to remove reads that are unpaired after filtering
 
 def make_header_set(inputfile):
     ffile = open(inputfile, "r")
@@ -86,39 +80,48 @@ def write_outfiles(prefiltered1, prefiltered2, filtered1, filtered2, unpairedfil
     out2.close()
     unpaired.close()
 
-
+## parameters from Snakemake
 quality = str(snakemake.params.q)
 percentage = str(snakemake.params.p)
+
+## file path from Snakemake
 inputfile1 = str(snakemake.input.fastq1)
 inputfile2 = str(snakemake.input.fastq2)
 filtered1 = str(snakemake.output.fastq1_filt)
 filtered2 = str(snakemake.output.fastq2_filt)
 unpairedfile = str(snakemake.output.unpaired)
-logfile = str(snakemake.log)
+logpath = str(snakemake.log)
+
+## temporary files, removed when finished
 prefiltered1 = filtered1.replace("filtered", "prefiltered")
 prefiltered2 = filtered2.replace("filtered", "prefiltered")
 
+logfile = open(logpath,"w")
 
 header_unfiltered1 = make_header_set(inputfile1)
-print("#unfiltered sequences R1: " + str(len(header_unfiltered1)))
+logfile.write("# of sequences for R1 before filtering: {}\n".format(str(len(header_unfiltered1))))
+logfile.write("# of sequences for R1 before filtering: {:,d}\n".format(len(header_unfiltered1)))
 header_unfiltered2 = make_header_set(inputfile2)
-print("#unfiltered sequences R2: " + str(len(header_unfiltered2)))
+logfile.write("# of sequences for R2 before filtering: {}\n".format(str(len(header_unfiltered2))))
 
-qfiltering(quality, percentage, inputfile1, prefiltered1, logfile)
-qfiltering(quality, percentage, inputfile2, prefiltered2, logfile)
+qfiltering(quality, percentage, inputfile1, prefiltered1, logpath)
+qfiltering(quality, percentage, inputfile2, prefiltered2, logpath)
 
 header_filtered1 = make_header_set(prefiltered1)
-print("#filtered sequences R1: " + str(len(header_filtered1)))
+logfile.write("# of filtered sequences for R1: {}\n".format(str(len(header_filtered1))))
 header_filtered2 = make_header_set(prefiltered2)
-print("#filtered sequences R2: " + str(len(header_filtered2)))
+logfile.write("# of filtered sequences for R2: {}\n".format(str(len(header_filtered2))))
 
 outfiltered1 = compare_sets(header_unfiltered1, header_filtered1)
-print("#sequences R1 filtered out: " + str(len(outfiltered1)))
+logfile.write("# of sequences for R1 filtered out: {}\n".format(str(len(outfiltered1))))
 outfiltered2 = compare_sets(header_unfiltered2, header_filtered2)
-print("#sequences R2 filtered out: " + str(len(outfiltered2)))
+logfile.write("# of sequences for R2 filtered out: {}\n".format(str(len(outfiltered2))))
 
 missing_in_one_dict = missing_in_one(outfiltered1, outfiltered2)
-print("#unpaired sequences: " + str(len(missing_in_one_dict)))
+logfile.write("# of unpaired sequences: {}\n".format(str(len(missing_in_one_dict))))
 
 write_outfiles(prefiltered1, prefiltered2, filtered1, filtered2, unpairedfile, missing_in_one_dict)
 os.system(f"rm {prefiltered1} {prefiltered2}")
+
+## Does it work with the log file? 
+logfile.close()

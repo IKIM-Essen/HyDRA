@@ -49,7 +49,7 @@ def get_ont_quality_filter(wildcards):
         quality = "15"
         return quality
 
-def get_ONT_reads_by_stage(wildcards):
+def get_ont_reads_by_stage(wildcards):
     if wildcards.stage == stages[0]:
         return "data/ont/{strain}.fastq.gz"
     elif wildcards.stage == stages[1]:
