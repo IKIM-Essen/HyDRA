@@ -38,15 +38,7 @@ rule porechop:
         "../envs/porechop.yaml"
     shell:
         "porechop -i {input} -o {output} 2> {log}"
-"""
-rule gzip:
-    input:
-        "results/porechop/{strain}_{stage}.fastq"
-    output:
-        "results/porechop/{strain}_{stage}.fastq.gz"
-    shell:
-        "gzip {input}"
-"""
+
 use rule nanofilt_lite as nanofilt with:
     input:
         "results/porechop/{strain}_{stage}.fastq.gz"
@@ -58,7 +50,7 @@ use rule nanofilt_lite as nanofilt with:
     log:
         "logs/nanofilt/{strain}_{stage}.log"
 
-rule coverage_ont:
+"""rule coverage_ont:
     input:
         "results/reports/trimmed/nanoplot/{strain}/NanoStats.txt"
     output:
@@ -69,7 +61,7 @@ rule coverage_ont:
     conda:
         "../envs/watstats.yaml"
     script:
-        "../scripts/coverage.py"
+        "../scripts/coverage_old.py"
 
 rule coverages_ont:
     input:
@@ -81,3 +73,4 @@ rule coverages_ont:
     shell:
         "cat {input} > {output} && "
         "rm {params.indir}*coverage.txt"
+        """

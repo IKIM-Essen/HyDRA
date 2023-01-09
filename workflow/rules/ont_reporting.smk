@@ -29,8 +29,8 @@ rule NanoPlot:
     input:
         get_ont_reads_by_stage
     output:
-        html = "results/reports/{stage}/{strain}/{strain}_NanoPlot-report.html",
-        txt = "results/reports/{stage}/{strain}/{strain}_NanoStats.txt"
+        html = "results/reports/{stage}/{strain}/NanoPlot/{strain}_NanoPlot-report.html",
+        txt = "results/reports/{stage}/{strain}/NanoPlot/{strain}_NanoStats.txt"
     params:
         outdir = lambda wildcards, output: Path(output.txt).parent,
         prefix = "{strain}_"
@@ -43,15 +43,15 @@ rule NanoPlot:
 
 rule rename_ont_reports:
     input:
-        nanostats = "results/reports/{stage}/{strain}/{strain}_NanoStats.txt",
-        nanoplot = "results/reports/{stage}/{strain}/{strain}_NanoPlot-report.html",
+        nanostats = "results/reports/{stage}/{strain}/NanoPlot/{strain}_NanoStats.txt",
+        nanoplot = "results/reports/{stage}/{strain}/NanoPlot/{strain}_NanoPlot-report.html",
         nanoqc = "results/reports/{stage}/{strain}/nanoQC.html",
         nanoqc_log = "results/reports/{stage}/{strain}/NanoQC.log"
 
     output:
-        nanostats = "results/reports/{stage}/{strain}_{stage}_NanoStats.txt",
-        nanoplot = "results/reports/{stage}/{strain}_{stage}_NanoPlot-report.html",
-        nanoqc = "results/reports/{stage}/{strain}_{stage}_nanoQC.html",
+        nanostats = "results/reports/{stage}/{strain}/{strain}_{stage}_NanoStats.txt",
+        nanoplot = "results/reports/{stage}/{strain}/{strain}_{stage}_NanoPlot-report.html",
+        nanoqc = "results/reports/{stage}/{strain}/{strain}_{stage}_nanoQC.html",
         nanoqc_log = "logs/nanoqc/{strain}_{stage}.log"
     shell:
         "mv {input.nanostats} {output.nanostats} && "

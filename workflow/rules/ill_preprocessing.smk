@@ -12,7 +12,7 @@ rule fastq_filter:
         # mean quality; also possible to filter by median quality
         quality = 26
     log:
-        "log/fastq_filter/{strain}_{lane}.log"
+        "logs/fastq_filter/{strain}_{lane}.log"
     conda:
         "../envs/fastq_filter.yaml"
     shell:
@@ -97,7 +97,7 @@ rule cutadapt_impro:
     wrapper:
         "v0.80.1/bio/cutadapt/pe"
 
-"""
+
 ## überflüssig?
 rule extract_fastqc_summary:
     input:
@@ -135,3 +135,4 @@ rule coverages_ill:
     shell:
         "cat {input} > {output} && "
         "rm {params.indir}*coverage.txt"
+        """

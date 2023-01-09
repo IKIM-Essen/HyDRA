@@ -24,8 +24,14 @@ def get_nanopore_reads(wildcards):
 def get_nanopore_barcode(wildcards):
     return pep.sample_table.loc[wildcards.strain][["nanopore_barcode"]]
 
-def get_genome_size(wildcards):
-    return pep.sample_table.loc[wildcards.strain]["species_genome_size"]
+def get_genome_size(strain):
+    return pep.sample_table.loc[strain]["species_genome_size"]
+
+def get_genome_size_dict():
+    genome_size_dict = {}
+    for sample in get_all_strain_ids():
+        genome_size_dict[sample] = get_genome_size(sample)
+    return genome_size_dict
 
 def get_all_stages():
     return stages

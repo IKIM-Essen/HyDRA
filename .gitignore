@@ -1,13 +1,14 @@
-*.log
 data/*
 results/*
+logs/*
 .snakemake/*
-ressources/*
+resources/*
 config/pep/documents.csv
 
 old_filter_results/*
 renameForTest_results/*
+renameForTest_logs/*
 multiqc_test/*
 workflow/old_scripts/*
-workflow/scripts/coverage.py
+workflow/scripts/coverage_old.py
 workflow/scripts/ill_rename_rawData.py
