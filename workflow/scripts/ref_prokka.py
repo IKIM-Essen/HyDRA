@@ -1,7 +1,7 @@
 import glob
 import os
 """
-refs = glob.glob("ressources/ref_genomes/GCF_ab*")
+refs = glob.glob("resources/ref_genomes/GCF_ab*")
 outdir_com = "results/analysis/ref_prokka/"
 for ref in refs:
     prefix = ref[ref.rfind("/") +1 :ref.find("_0")]

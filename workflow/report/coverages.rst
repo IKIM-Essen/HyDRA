@@ -1,0 +1,1 @@
+coverage calculated with watstats for each sample
