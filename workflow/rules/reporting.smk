@@ -1,7 +1,8 @@
 rule multiqc_before_trim:
     input:
         nanostats = expand("results/reports/before_trim/{strain}/{strain}_before_trim_NanoStats.txt", strain=get_all_strain_ids()),
-        fastqc_bt = expand("results/reports/before_trim/{strain}/{strain}_{lane}_{read}_fastqc.zip", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids())
+        fastqc_bt = expand("results/reports/before_trim/{strain}/{strain}_{lane}_{read}_fastqc.zip", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids()),
+        pycoqc = expand("results/reports/run_QC/{run}_pycoqc.html", run=get_all_ont_runs())
     output:
         report("results/reports/multiqc/before_trim_multiqc.html", caption="../report/before_trim_multiqc.rst", category="before_trim"),
         ont = "results/reports/multiqc/before_trim_multiqc_data/multiqc_nanostat.txt",
@@ -18,7 +19,7 @@ use rule multiqc_before_trim as multiqc_trimmed with:
         nanostats = expand("results/reports/trimmed/{strain}/{strain}_trimmed_NanoStats.txt", strain=get_all_strain_ids()),
         fastqc_t = expand("results/reports/trimmed/{strain}/{strain}_{read}_fastqc.zip", strain=get_all_strain_ids(), read=get_all_read_ids())
     output:
-        "results/reports/multiqc/trimmed_multiqc.html",#, caption="../report/trimmed_multiqc.rst", category="trimmed")
+        report("results/reports/multiqc/trimmed_multiqc.html", caption="../report/trimmed_multiqc.rst", category="trimmed"),
         ont = "results/reports/multiqc/trimmed_multiqc_data/multiqc_nanostat.txt",
         ill = "results/reports/multiqc/trimmed_multiqc_data/multiqc_fastqc.txt"
     log:
@@ -29,7 +30,7 @@ rule coverages:
         ont = "results/reports/multiqc/{stage}_multiqc_data/multiqc_nanostat.txt",
         ill = "results/reports/multiqc/{stage}_multiqc_data/multiqc_fastqc.txt"
     output:
-        "results/reports/{stage}_coverages.csv"
+        report("results/reports/{stage}_coverages.csv", caption="../report/coverages.rst", category="{stage}")
     params:
         genomesizes = get_genome_size_dict()
     log:

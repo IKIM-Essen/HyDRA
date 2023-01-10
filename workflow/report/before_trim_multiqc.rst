@@ -1,1 +1,1 @@
-MultiQC report
+MultiQC report before filtering and trimming

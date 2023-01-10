@@ -19,7 +19,7 @@ rule all:
         expand("results/reports/{stage}_coverages.csv", stage=get_all_stages()),
         #expand("results/reports/before_trim/{strain}_{lane}_{read}_fastqc.html", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids()),
         #expand("results/reports/trimmed/{strain}_{read}_fastqc.html", strain=get_all_strain_ids(), read=get_all_read_ids()),
-        expand("results/reports/multiqc/{stage}_multiqc.html", stage=get_all_stages()),
+        #expand("results/reports/multiqc/{stage}_multiqc.html", stage=get_all_stages()),
         expand("results/reports/run_QC/{run}_pycoqc.html", run=get_all_ont_runs())
         #expand("results/preprocess_ill/{strain}/{strain}_{lane}_{read}_trimmed.fastq", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids())
         #expand("results/reports/{stage}/all_reports/{strain}_{stage}_nanoQC.html", strain=get_all_strain_ids(), stage=get_all_stages()),#get_all_stages())
