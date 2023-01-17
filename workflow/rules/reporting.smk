@@ -25,6 +25,7 @@ use rule multiqc_before_trim as multiqc_trimmed with:
     log:
         "logs/multiqc/trimmed.log"
 
+## coverage calculation (display in multiqc report does not work yet)
 rule coverages:
     input:
         ont = "results/reports/multiqc/{stage}_multiqc_data/multiqc_nanostat.txt",
