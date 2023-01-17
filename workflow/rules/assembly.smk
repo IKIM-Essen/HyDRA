@@ -1,7 +1,25 @@
 from pathlib import Path
 
-"""
+rule unicycler:
+    input:
+        # R1 and R2 short reads:
+        paired_1 = "results/preprocess_ill/{strain}/{strain}_R1_trimmed.fastq.gz", #"results/cutadapt/{strain}/{strain}_R1_trimmed.fastq.gz",
+        paired_2 = "results/preprocess_ill/{strain}/{strain}_R2_trimmed.fastq.gz", #"results/cutadapt/{strain}/{strain}_R2_trimmed.fastq.gz",
+        # Long reads:
+        long = "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
+    output:
+        fasta = "results/assembly/{strain}/assembly.fasta"
+    log:
+        "logs/unicycler/{strain}.log" #automated log file - we need to mv it
+    params:
+        extra = "--min_fasta_length 500",
+        outdir = lambda wildcards, output: Path(output.fasta).parent
+    conda:
+        "../envs/unicycler.yaml"
+    shell:
+        "unicycler -1 {input.paired_1} -2 {input.paired_2} -l {input.long} {params.extra} -o {params.outdir} 2> {log}"
 
+"""
 # use part of spades for unicycler
 rule spades:
     input:
@@ -36,26 +54,6 @@ rule rename_assembly:
         "results/assembly/{strain}/{strain}_assembly.fasta"
     shell:
         "cp {input} {output}"
-
-"""
-rule unicycler:
-    input:
-        # R1 and R2 short reads:
-        paired_1 = "results/preprocess_ill/{strain}/{strain}_R1_trimmed.fastq.gz", #"results/cutadapt/{strain}/{strain}_R1_trimmed.fastq.gz",
-        paired_2 = "results/preprocess_ill/{strain}/{strain}_R2_trimmed.fastq.gz", #"results/cutadapt/{strain}/{strain}_R2_trimmed.fastq.gz",
-        # Long reads:
-        long = "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
-    output:
-        fasta = "results/unicycler/{strain}/assembly.fasta"
-    log:
-        "logs/unicycler/{strain}.log"
-    params:
-        extra = "--min_fasta_length 500",
-        outdir = lambda wildcards, output: Path(output.fasta).parent
-    conda:
-        "../envs/unicycler.yaml"
-    shell:
-        "unicycler -1 {input.paired_1} -2 {input.paired_2} -l {input.long} {params.extra} -o {params.outdir} > {log} 2>&1"
 
 rule canu:
     input:
@@ -172,3 +170,4 @@ rule medaka:
         "../envs/medaka.yaml"
     shell:
         "medaka tools list_models > {output}"
+"""

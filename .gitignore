@@ -10,3 +10,5 @@ renameForTest_logs/*
 workflow/scripts/ill_rename_rawData.py
 *.ipynb
 *old*
+*test*
+*busco_down*

@@ -48,8 +48,6 @@ rule checkm_canu:
     shell:
         "checkm lineage_wf -x fasta {params.indir}/ {params.outdir}/ > {log} 2>&1"
 
-"""
-
 rule checkm:
     input:
         ass = "results/final_assemblies/{strain}/assembly.fasta"
@@ -63,27 +61,28 @@ rule checkm:
     conda:
         "../envs/checkm.yaml"
     shell:
-        "checkm lineage_wf -x fasta {params.indir} {params.outdir} > {log} 2>&1"
-
+        "checkm lineage_wf -x fasta {params.indir} {params.outdir} 2> {log}"
+"""
 rule quast_uni:
     input:
-        "results/unicycler/{strain}/assembly.fasta"
+        "results/assembly/{strain}/assembly.fasta"
     output:
-        repo = "results/reports/assembly/quast/{strain}_uni/report.txt"
+        repo = "results/reports/assembly/{strain}/quast/report.tsv"
     params:
         outdir = lambda wildcards, output: Path(output.repo).parent
+        busco = "-b"#"--conserved-genes-finding"
     log:
-        "logs/quast/unicycler_{strain}.log"
+        "logs/quast/unicycler_{strain}.log" # log file automated created - need to mv it
     conda:
         "../envs/quast.yaml"
     shell:
-        "quast -o {params.outdir}/ {input} > {log} 2>&1"
+        "quast {params.busco} -o {params.outdir}/ {input} 2> {log}"
 
 rule checkm_uni:
     input:
-        ass = "results/unicycler/{strain}/assembly.fasta"
+        ass = "results/assembly/{strain}/assembly.fasta"
     output:
-        repo = "results/reports/assembly/checkm/{strain}_uni/lineage.ms"
+        repo = "results/reports/assembly/{strain}/checkm/lineage.ms"
     params:
         indir = lambda wildcards, input: Path(input.ass).parent,
         outdir = lambda wildcards, output: Path(output.repo).parent
@@ -92,4 +91,18 @@ rule checkm_uni:
     conda:
         "../envs/checkm.yaml"
     shell:
-        "checkm lineage_wf -x fasta {params.indir}/ {params.outdir}/ > {log} 2>&1"
+        "checkm lineage_wf -x fasta {params.indir}/ {params.outdir}/ 2> {log}"
+
+'''
+rule busco:
+    input:
+        "results/assembly/{strain}/assembly.fasta"
+    output:
+        dir("results/reports/assembly/{strain}/busco/")
+    params:
+        outfolder_name = "{strain}_busco"
+    #logfile is produced in log subfolder -> need to mv it
+    shell:
+        "busco -i {input} -o {params.outdir} -m genome --auto-lineage-prok "
+        "&& mv {params.outfolder_name}/* {output}/*"
+'''
