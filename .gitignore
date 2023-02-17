@@ -3,10 +3,11 @@ results/*
 logs/*
 .snakemake/*
 resources/*
-config/pep/documents.csv
 
 renameForTest_results/*
 renameForTest_logs/*
 workflow/scripts/ill_rename_rawData.py
 *.ipynb
 *old*
+*test*
+*busco_down*
