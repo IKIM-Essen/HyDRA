@@ -65,11 +65,11 @@ rule checkm:
 """
 rule quast_uni:
     input:
-        "results/assembly/{strain}/assembly.fasta"
+        "results/assembly/{strain}/{strain}_assembly.fasta"
     output:
         repo = "results/reports/assembly/{strain}/quast/report.tsv"
     params:
-        outdir = lambda wildcards, output: Path(output.repo).parent
+        outdir = lambda wildcards, output: Path(output.repo).parent,
         busco = "-b"#"--conserved-genes-finding"
     log:
         "logs/quast/unicycler_{strain}.log" # log file automated created - need to mv it
@@ -80,7 +80,7 @@ rule quast_uni:
 
 rule checkm_uni:
     input:
-        ass = "results/assembly/{strain}/assembly.fasta"
+        ass = "results/assembly/{strain}/{strain}_assembly.fasta"
     output:
         repo = "results/reports/assembly/{strain}/checkm/lineage.ms"
     params:

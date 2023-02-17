@@ -97,8 +97,12 @@ rule combine_fastp_lanes:
         l2 = "results/preprocess_ill/{strain}/{strain}_L002_{read}_trimmed.fastq.gz"
     output:
         "results/preprocess_ill/{strain}/{strain}_{read}_trimmed.fastq.gz"
+    log:
+        "logs/fastp/{strain}_{read}_fastp.log"
+    conda:
+        "../envs/fastp.yaml"
     shell:
-        "cat {input.l1} {input.l2} > {output}"
+        "cat {input.l1} {input.l2} > {output} 2> {log}"
 
 """
 rule cutadapt:

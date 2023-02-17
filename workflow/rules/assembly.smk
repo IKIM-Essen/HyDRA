@@ -8,16 +8,23 @@ rule unicycler:
         # Long reads:
         long = "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
     output:
-        fasta = "results/assembly/{strain}/assembly.fasta"
+        fasta = "results/assembly/{strain}/{strain}_assembly.fasta",
+        gfa = "results/assembly/{strain}/{strain}_assembly.gfa"
     log:
         "logs/unicycler/{strain}.log" #automated log file - we need to mv it
     params:
         extra = "--min_fasta_length 500",
-        outdir = lambda wildcards, output: Path(output.fasta).parent
+        outdir = "results/assembly/{strain}/unicycler/",
+        log_old = "results/assembly/{strain}/unicycler/unicycler.log", # path.join(outdir, "unicycler.log")
+        fasta_old = "results/assembly/{strain}/unicycler/assembly.fasta",
+        gfa_old = "results/assembly/{strain}/unicycler/assembly.gfa"
     conda:
         "../envs/unicycler.yaml"
     shell:
-        "unicycler -1 {input.paired_1} -2 {input.paired_2} -l {input.long} {params.extra} -o {params.outdir} 2> {log}"
+        "unicycler -1 {input.paired_1} -2 {input.paired_2} -l {input.long} {params.extra} -o {params.outdir} && "#2> {log}"
+        "mv {params.log_old} {log} && "
+        "mv {params.fasta_old} {output.fasta} && "
+        "mv {params.gfa_old} {output.gfa}"
 
 """
 # use part of spades for unicycler

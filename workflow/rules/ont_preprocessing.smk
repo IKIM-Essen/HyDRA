@@ -1,5 +1,5 @@
 
-rule combine_ont_fastqs:
+'''rule combine_ont_fastqs:
     input:
         get_nanopore_reads
     output:
@@ -7,11 +7,11 @@ rule combine_ont_fastqs:
     log:
         "logs/com_ont_fastqs/{strain}.log"
     script:
-        "../scripts/ont_combine_rawData.py"
+        "../scripts/ont_combine_rawData.py"'''
 
 rule nanofilt_lite:
     input:
-        "data/ont/{strain}.fastq.gz"
+        get_nanopore_reads
     params:
         length = "5000",
         quality = "11"
