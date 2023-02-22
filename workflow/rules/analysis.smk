@@ -1,16 +1,17 @@
 from pathlib import Path
 
-rule rename_assembly:
+'''rule rename_assembly:
     input:
         "results/final_assemblies/{strain}/assembly.fasta"
     output:
         "results/assembly/{strain}_contig.fasta"
     shell:
-        "cp {input} {output}"
+        "cp {input} {output}"'''
 
 rule prokka:
     input:
-        "results/assembly/{strain}_contig.fasta"
+        "results/assembly/{strain}/{strain}_assembly.fasta"
+        #"results/assembly/{strain}_contig.fasta"
     output:
         gff = "results/analysis/prokka/{strain}/{strain}.gff"
     params:
@@ -20,19 +21,45 @@ rule prokka:
     conda:
         "../envs/prokka.yaml"
     shell:
-        "prokka --outdir {params.outdir}/ --force --prefix {wildcards.strain} {input} > {log} 2>&1"
+        "prokka --outdir {params.outdir}/ --force --prefix {wildcards.strain} {input} 2> {log}"
 
 rule abricate:
     input:
-        "results/assembly/{strain}_contig.fasta"
+        "results/assembly/{strain}/{strain}_assembly.fasta"
+        #"results/assembly/{strain}_contig.fasta"
     output:
-        ncbi = "results/analysis/abricate/{strain}/{strain}_ncbi.tab",
-        summary = "results/analysis/abricate/{strain}/{strain}_summary.txt"
+        all = "results/analysis/abricate/{strain}/{strain}_all.csv",
+        info = "results/analysis/abricate/{strain}/{strain}_info.txt"
+        #ncbi = "results/analysis/abricate/{strain}/{strain}_ncbi.tab",
+        #summary = "results/analysis/abricate/{strain}/{strain}_summary.txt"
     params:
-        outdir = lambda wildcards, output: Path(output.ncbi).parent
+        outdir = lambda wildcards, output: Path(output.all).parent
     log:
         "logs/abricate/{strain}.log"
     conda:
         "../envs/abricate.yaml"
     script:
-        "../scripts/abricate_summary.py"
+        "../scripts/abricate_all.py"
+        
+## visualize the annotated genome
+rule gview:
+    input:
+        gff = "results/analysis/prokka/{strain}/{strain}.gff",
+        gbk = "results/analysis/prokka/{strain}/{strain}.gbk"
+    output:
+        "results/reports/assembly/{strain}_gview.png"
+    params:
+        extra = "-l circular",
+        jar_file = "resources/gview/gview.jar",
+        ## style sheet
+        gss = "resources/gview/example_styles/gssExample.gss"
+        ## we need a style sheet to make this look cool! (see basic and gss examples)
+        #style_sheet = 
+    log:
+        "logs/gview/{strain}.log"
+    conda:
+        "../envs/gview.yaml" # env with java
+    shell:
+        "java -jar {params.jar_file} -i {input.gbk} -o {output} "
+        "-g {input.gff} -s {params.gss} {params.extra}"
+  

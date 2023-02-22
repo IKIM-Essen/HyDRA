@@ -1,6 +1,6 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
 dependencies:
   - medaka = 1.0.3
   - tensorflow = 1.14.0
