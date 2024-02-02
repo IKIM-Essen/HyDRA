@@ -3,4 +3,4 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - porechop_abi = 0.5.0
+  - checkm2 = 1.0.1

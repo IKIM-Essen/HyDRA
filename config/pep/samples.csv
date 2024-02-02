@@ -1,0 +1,2 @@
+sample_name,ont,illumina_R1,illumina_R2,species_genome_size
+ab_115,/groups/ds/resistance_cefiderocol/data/subsampled/ab_115.fastq.gz,/groups/ds/resistance_cefiderocol/data/subsampled/ab_115_R1.fastq.gz,/groups/ds/resistance_cefiderocol/data/subsampled/ab_115_R2.fastq.gz,4000

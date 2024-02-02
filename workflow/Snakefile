@@ -2,45 +2,56 @@ configfile: "config/config.yaml"
 
 pepfile: config["pepfile"]
 
-report: "report/workflow.rst"
+#report: "report/workflow.rst"
 
 include: "rules/common.smk"
-include: "rules/ont_preprocessing.smk"
-include: "rules/ont_reporting.smk"
-include: "rules/ill_preprocessing.smk"
-include: "rules/ill_reporting.smk"
-include: "rules/reporting.smk"
+include: "rules/local_data.smk"
+include: "rules/trimming_filtering.smk"
+include: "rules/qualitycontrol.smk"
 include: "rules/assembly.smk"
-include: "rules/assembly_qc.smk"
 include: "rules/analysis.smk"
+
+
+#include: "rules/ont_preprocessing.smk"
+#include: "rules/ont_reporting.smk"
+#include: "rules/ill_preprocessing.smk"
+#include: "rules/ill_reporting.smk"
+#include: "rules/reporting.smk"
+#include: "rules/assembly.smk"
+#include: "rules/assembly_qc.smk"
+#include: "rules/analysis.smk"
 
 rule all:
     input:
-        expand("results/reports/{stage}_coverages.csv", stage=get_all_stages())#,
-        #"results/reports/assembly/120/quast/report.tsv",
-        #"results/reports/assembly/120/checkm/lineage.ms"
+        expand("results/{date}/report/multiqc.html", date=get_run_date()),
+        expand("results/{date}/qc/checkm2/{sample}/quality_report.tsv", date=get_run_date(), sample=get_samples()),
+        expand("results/{date}/analysis/plm_arg/{sample}.tsv", date=get_run_date(), sample=get_samples()),
 
-        #"results/reports/assembly/assembly_multiqc.html",
-        #expand("results/reports/assembly/{strain}/quast/report.txt", strain=get_all_strain_ids()),
-        #expand("results/reports/assembly/{strain}/checkm/lineage.ms", strain=get_all_strain_ids())
-        #expand("results/reports/before_trim/{strain}_{lane}_{read}_fastqc.html", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids()),
-        #expand("results/reports/trimmed/{strain}_{read}_fastqc.html", strain=get_all_strain_ids(), read=get_all_read_ids()),
-        #expand("results/reports/multiqc/{stage}_multiqc.html", stage=get_all_stages()),
-        #expand("results/reports/run_QC/{run}_pycoqc.html", run=get_all_ont_runs())
-        #expand("results/preprocess_ill/{strain}/{strain}_{lane}_{read}_trimmed.fastq", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids())
-        #expand("results/reports/{stage}/all_reports/{strain}_{stage}_nanoQC.html", strain=get_all_strain_ids(), stage=get_all_stages()),#get_all_stages())
-        #expand("results/reports/trimmed/fastqc/{strain}/{strain}_{read}_trimmed_fastqc.html", strain=get_all_strain_ids(), read=get_all_read_ids()),
-        #"results/reports/trimmed/all_reports/ill_coverages.txt",
-        #"results/reports/trimmed/all_reports/ont_coverages.txt",
-        #expand("results/reports/assembly/quast/{strain}_spades/report.txt", strain=get_all_strain_ids()),
-        #expand("results/reports/assembly/quast/{strain}_uni/report.txt", strain=get_all_strain_ids()),
-        #expand("results/reports/assembly/checkm/{strain}_uni/lineage.ms", strain=get_all_strain_ids()),
-        #expand("results/reports/assembly/checkm/{strain}_canu/lineage.ms", strain=get_all_strain_ids())
-        #expand("results/pilon/{strain}/{strain}.fasta", strain=get_all_strain_ids())
-        #expand("results/medaka/{strain}_list_models.txt", strain=get_all_strain_ids())
-        #expand("results/reports/assembly/checkm/{strain}/lineage.ms", strain=get_all_strain_ids()),
-        #expand("results/analysis/prokka/{strain}/{strain}.gff", strain=get_all_strain_ids()),
-        #expand("results/analysis/abricate/{strain}/{strain}_summary.txt", strain=get_all_strain_ids())
+#expand("results/reports/{stage}_coverages.csv", stage=get_all_stages())#,
+#"results/reports/assembly/120/quast/report.tsv",
+#"results/reports/assembly/120/checkm/lineage.ms"
+
+#"results/reports/assembly/assembly_multiqc.html",
+#expand("results/reports/assembly/{strain}/quast/report.txt", strain=get_all_strain_ids()),
+#expand("results/reports/assembly/{strain}/checkm/lineage.ms", strain=get_all_strain_ids())
+#expand("results/reports/before_trim/{strain}_{lane}_{read}_fastqc.html", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids()),
+#expand("results/reports/trimmed/{strain}_{read}_fastqc.html", strain=get_all_strain_ids(), read=get_all_read_ids()),
+#expand("results/reports/multiqc/{stage}_multiqc.html", stage=get_all_stages()),
+#expand("results/reports/run_QC/{run}_pycoqc.html", run=get_all_ont_runs())
+#expand("results/preprocess_ill/{strain}/{strain}_{lane}_{read}_trimmed.fastq", strain=get_all_strain_ids(), lane=get_all_lanes(), read=get_all_read_ids())
+#expand("results/reports/{stage}/all_reports/{strain}_{stage}_nanoQC.html", strain=get_all_strain_ids(), stage=get_all_stages()),#get_all_stages())
+#expand("results/reports/trimmed/fastqc/{strain}/{strain}_{read}_trimmed_fastqc.html", strain=get_all_strain_ids(), read=get_all_read_ids()),
+#"results/reports/trimmed/all_reports/ill_coverages.txt",
+#"results/reports/trimmed/all_reports/ont_coverages.txt",
+#expand("results/reports/assembly/quast/{strain}_spades/report.txt", strain=get_all_strain_ids()),
+#expand("results/reports/assembly/quast/{strain}_uni/report.txt", strain=get_all_strain_ids()),
+#expand("results/reports/assembly/checkm/{strain}_uni/lineage.ms", strain=get_all_strain_ids()),
+#expand("results/reports/assembly/checkm/{strain}_canu/lineage.ms", strain=get_all_strain_ids())
+#expand("results/pilon/{strain}/{strain}.fasta", strain=get_all_strain_ids())
+#expand("results/medaka/{strain}_list_models.txt", strain=get_all_strain_ids())
+#expand("results/reports/assembly/checkm/{strain}/lineage.ms", strain=get_all_strain_ids()),
+#expand("results/analysis/prokka/{strain}/{strain}.gff", strain=get_all_strain_ids()),
+#expand("results/analysis/abricate/{strain}/{strain}_summary.txt", strain=get_all_strain_ids())
 
 
 """

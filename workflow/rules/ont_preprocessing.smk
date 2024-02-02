@@ -1,14 +1,3 @@
-
-'''rule combine_ont_fastqs:
-    input:
-        get_nanopore_reads
-    output:
-        "data/ont/{strain}.fastq.gz"
-    log:
-        "logs/com_ont_fastqs/{strain}.log"
-    script:
-        "../scripts/ont_combine_rawData.py"'''
-
 rule nanofilt_lite:
     input:
         get_nanopore_reads
@@ -49,6 +38,16 @@ use rule nanofilt_lite as nanofilt with:
         "results/nanofilt/{stage}/{strain}_{stage}.fastq.gz"
     log:
         "logs/nanofilt/{strain}_{stage}.log"
+
+'''rule combine_ont_fastqs:
+    input:
+        get_nanopore_reads
+    output:
+        "data/ont/{strain}.fastq.gz"
+    log:
+        "logs/com_ont_fastqs/{strain}.log"
+    script:
+        "../scripts/ont_combine_rawData.py"'''
 
 """rule coverage_ont:
     input:
