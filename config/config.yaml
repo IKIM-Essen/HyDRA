@@ -4,7 +4,10 @@
 pepfile: config/pep/config.yaml
 
 # date of analysis or project name
-run_date: "test_115"
+run_date: "lmono_32"
+
+# choose between short, long or hybrid
+assembly_type: "short"
 
 data_handling:
   resources: "resources/"

@@ -25,7 +25,7 @@ rule all:
     input:
         expand("results/{date}/report/multiqc.html", date=get_run_date()),
         expand("results/{date}/qc/checkm2/{sample}/quality_report.tsv", date=get_run_date(), sample=get_samples()),
-        expand("results/{date}/analysis/plm_arg/{sample}.tsv", date=get_run_date(), sample=get_samples()),
+        expand("results/{date}/report/arg_plot.html", date=get_run_date()),
 
 #expand("results/reports/{stage}_coverages.csv", stage=get_all_stages())#,
 #"results/reports/assembly/120/quast/report.tsv",

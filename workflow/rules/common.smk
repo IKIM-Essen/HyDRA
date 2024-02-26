@@ -9,6 +9,24 @@ def get_root():
     return os.getcwd()
 
 
+def get_assembly_type():
+    return config["assembly_type"]
+
+
+def get_has_short_reads():
+    if get_assembly_type() == "hybrid" or get_assembly_type() == "short":
+        return True
+    else:
+        return False
+
+
+def get_has_long_reads():
+    if get_assembly_type() == "hybrid" or get_assembly_type() == "long":
+        return True
+    else:
+        return False
+
+
 def get_data_path_ill():
     return config["data_handling"]["data"]["illumina"]
 
@@ -42,6 +60,34 @@ def get_ont_fastq(wildcards):
 
 def get_adapters():
     return config["adapter_seqs"]
+
+
+def get_multiqc_input(wildcards):
+    if get_has_short_reads():
+        short_in=expand(
+                [
+                    "results/{{date}}/trimmed/fastp/{sample}.fastp.json",
+                    "results/{{date}}/qc/fastqc/{sample}/ill_{sample}_{read}_fastqc.zip",
+                ],
+                sample=get_samples(),
+                read=["1", "2"],
+            )
+
+    if get_has_long_reads():
+        long_in=expand(
+                [
+                    "results/{{date}}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
+                ],
+                sample=get_samples(),
+            )
+    if get_assembly_type() == "hybrid":
+        hybrid_in=short_in.extend(long_in)
+        return hybrid_in
+    elif get_assembly_type() == "short":
+        return short_in
+    elif get_assembly_type() == "long":
+        return long_in
+
 
 
 def get_checkm2_db():

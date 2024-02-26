@@ -3,18 +3,20 @@ from pathlib import Path
 
 rule prokka:
     input:
-        rules.unicycler.output.assembly,
+        rules.move_and_gz_assembly.output.fa,
     output:
         faa="results/{date}/analysis/prokka/{sample}/{sample}.faa",
     params:
         outdir=lambda wildcards, output: Path(output.faa).parent,
     log:
         "logs/{date}/analysis/prokka/{sample}.log",
+    threads: 12
     conda:
         "../envs/prokka.yaml"
     shell:
         "prokka --outdir {params.outdir}/ --force "
-        "--prefix {wildcards.sample} {input} > {log} 2>&1"  #--quiet
+        "--prefix {wildcards.sample} --cpus {threads} "
+        "{input} > {log} 2>&1"  #--quiet
 
 
 # for metagenomic data:
@@ -24,7 +26,7 @@ rule prokka:
 rule clone_plm_arg:
     output:
         main=get_plm_arg_main(),
-        dummy=touch("clone_plm_arg.done"),
+        dummy=touch("logs/clone_plm_arg.done"),
     log:
         "logs/plm_arg_clone.log",
     params:
@@ -116,7 +118,7 @@ rule run_plm_arg:
         main=get_plm_arg_main(),
         fasta=rules.prokka.output.faa,
     output:
-        "results/{date}/analysis/plm_arg/{sample}.tsv",
+        tsv="results/{date}/analysis/plm_arg/{sample}/{sample}.tsv",
     params:
         folder=lambda wildcards, input: Path(input.main).parent,
         main= lambda wildcards, input: Path(input.main).name,
@@ -127,9 +129,38 @@ rule run_plm_arg:
     conda:
         "../envs/plm_arg.yaml"
     shell:
-        "(cd {params.folder} && "
+        "(cd {params.folder}/ && "
         "python {params.main} predict -i {params.root}/{input.fasta} "
-        "-o {params.root}/{output} > {log} 2>&1) "
+        "-o {params.root}/{output.tsv}) > {log} 2>&1"
+
+
+rule extract_plm_arg_results:
+    input:
+        tsv=rules.run_plm_arg.output.tsv,
+    output:
+        arg="results/{date}/analysis/plm_arg/{sample}/{sample}_arg.csv",
+        non_arg="results/{date}/analysis/plm_arg/{sample}/{sample}_non_arg.csv",
+    log:
+        "logs/{date}/analysis/plm_arg/{sample}_extract.log",
+    threads: 2
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/extract_plm_arg.py"
+
+
+rule plot_plm_arg_results:
+    input:
+        csv=expand("results/{{date}}/analysis/plm_arg/{sample}/{sample}_arg.csv", sample=get_samples()),
+    output:
+        html="results/{date}/report/arg_plot.html",
+    log:
+        "logs/{date}/report/arg_plot.log",
+    threads: 2
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/plot_resistance.py"
 
 
 """

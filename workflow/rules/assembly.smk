@@ -1,20 +1,71 @@
 from pathlib import Path
 
-rule unicycler:
+if get_assembly_type() == "hybrid":
+
+    rule unicycler_hybrid:
+        input:
+            # R1 and R2 short reads:
+            paired = rules.fastp.output.trimmed,
+            # Long reads:
+            long = rules.chopper.output.trim_filt,
+        output:
+            assembly="results/{date}/assembly/{sample}/assembly.fasta",
+        log:
+            "logs/{date}/assembly/unicycler_hybrid/{sample}.log"
+        params:
+            extra=""
+        threads: 24
+        wrapper:
+            "v3.3.6/bio/unicycler"
+
+
+elif get_assembly_type() == "short":
+
+    rule unicycler_short:
+        input:
+            # R1 and R2 short reads:
+            paired = rules.fastp.output.trimmed,
+        output:
+            assembly="results/{date}/assembly/{sample}/assembly.fasta",
+        log:
+            "logs/{date}/assembly/unicycler_short/{sample}.log"
+        params:
+            extra=""
+        threads: 24
+        wrapper:
+            "v3.3.6/bio/unicycler"
+
+
+elif get_assembly_type() == "long":
+
+    rule unicycler_long:
+        input:
+            # Long reads:
+            long = rules.chopper.output.trim_filt,
+        output:
+            assembly="results/{date}/assembly/{sample}/assembly.fasta",
+        log:
+            "logs/{date}/assembly/unicycler_long/{sample}.log"
+        params:
+            extra=""
+        threads: 24
+        wrapper:
+            "v3.3.6/bio/unicycler"
+
+
+rule move_and_gz_assembly:
     input:
-        # R1 and R2 short reads:
-        paired = rules.fastp.output.trimmed,
-        # Long reads:
-        long = rules.chopper.output.trim_filt,
+        "results/{date}/assembly/{sample}/assembly.fasta"
     output:
-        assembly="results/{date}/assembly/{sample}/assembly.fasta",
+        fa=temp("results/{date}/out/assembly/{sample}_assembly.fasta"),
+        fa_gz="results/{date}/out/assembly/{sample}_assembly.fasta.gz",
     log:
-        "logs/{date}/assembly/unicycler/{sample}.log"
-    params:
-        extra=""
-    threads: 24
-    wrapper:
-        "v3.3.6/bio/unicycler"
+        "logs/{date}/assembly/move_gzip/{sample}.log",
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "(cp {input} {output.fa} && "
+        "gzip -k {output.fa}) > {log} 2>&1"
 
 
 ## assembly QC
@@ -53,20 +104,20 @@ else:
 
 rule checkm2_run:
     input:
-        assembly=rules.unicycler.output.assembly,
-        #"results/{date}/das_tool/{sample}/{sample}_DASTool_bins/",
+        assembly=rules.move_and_gz_assembly.output.fa_gz,
         dbfile=get_checkm2_db(),
     output:
         stats="results/{date}/qc/checkm2/{sample}/quality_report.tsv",
     params:
         outdir=lambda wildcards, output: Path(output.stats).parent,
+        ext=lambda wildcards, input: Path(input.assembly).suffix,
     log:
         "logs/{date}/assembly/checkm2/{sample}.log",
     threads: 4
     conda:
         "../envs/checkm2.yaml"
     shell:
-        "checkm2 predict -x fasta --threads {threads} --force "
+        "checkm2 predict -x {params.ext} --threads {threads} --force "
         "--database_path {input.dbfile} --input {input.assembly} "
         "--output-directory {params.outdir}/ > {log} 2>&1"
         # --remove_intermediates-x fa.gz
