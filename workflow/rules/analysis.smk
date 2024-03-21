@@ -5,9 +5,9 @@ rule prokka:
     input:
         rules.move_and_gz_assembly.output.fa,
     output:
-        faa="results/{date}/analysis/prokka/{sample}/{sample}.faa",
+        faa=multiext("results/{date}/analysis/prokka/{sample}/{sample}.", "faa", "gff"),
     params:
-        outdir=lambda wildcards, output: Path(output.faa).parent,
+        outdir=lambda wildcards, output: Path(output.faa[0]).parent,
     log:
         "logs/{date}/analysis/prokka/{sample}.log",
     threads: 12
@@ -19,8 +19,110 @@ rule prokka:
         "{input} > {log} 2>&1"  #--quiet
 
 
+rule load_genomad_DB:
+    output:
+        file=get_genomad_DB_file(),
+    params:
+        folder=lambda wildcards, output: Path(output.file).parent.parent,
+    log:
+        "logs/load_genomad_DB.log",
+    conda:
+        "../envs/genomad.yaml"
+    shell:
+        "genomad download-database {params.folder}/ > {log} 2>&1"
+
+
+rule genomad_run:
+    input:
+        db=rules.load_genomad_DB.output.file,
+        asmbl=rules.move_and_gz_assembly.output.fa_gz,
+    output:
+        plasmid_tsv="results/{date}/analysis/genomad/{sample}/{sample}_summary/{sample}_plasmid_summary.tsv",
+        virus_tsv="results/{date}/analysis/genomad/{sample}/{sample}_summary/{sample}_virus_summary.tsv",
+    params:
+        db_folder=lambda wildcards, input: Path(input.db).parent,
+        outdir=lambda wildcards, output: Path(output.plasmid_tsv).parent.parent,
+    log:
+        "logs/{date}/analysis/genomad/{sample}.log",
+    threads: 30
+    conda:
+        "../envs/genomad.yaml"
+    shell:
+        "genomad end-to-end --cleanup -t {threads} "
+        "{input.asmbl} {params.outdir}/ "
+        "{params.db_folder}/ > {log} 2>&1"
+
+
+
 # for metagenomic data:
 # --metagenome
+if config["card"]["data"]["use_local"]:
+
+    rule copy_local_CARD_data:
+        output:
+            json=get_card_db_file(),
+        params:
+            local=config["card"]["data"]["local_path"],
+            folder=lambda wildcards, output: Path(output.json).parent,
+            tar_name=get_card_tar_file(),
+        log:
+            "logs/CARD_data_local_copy.log",
+        conda:
+            "../envs/unix.yaml"
+        shell:
+            "(mkdir -p {params.folder}/ && "
+            "cd {params.folder}/ && "
+            "cp {params.local} . && "
+            "tar -xvf {params.tar_name}) > {log} 2>&1"
+'''
+else:
+
+    rule download_CARD_data:
+        output:
+            model=get_card_db_folder(),
+        params:
+            download=config["card"]["data"]["url"],
+            folder=get_card_db_folder(),
+        log:
+            "logs/CARD_data_download.log",
+        conda:
+            "../envs/unix.yaml"
+        shell:
+            "(cd {params.folder} && "
+            "wget {params.download}) > {log} 2>&1"
+'''
+#rgi load -i resources/card_db/card.json --local
+#rgi main -i results/test_115/analysis/prokka/ab_115/ab_115.faa -o results/test_115/analysis/rgi_115.out -t protein -a DIAMOND -d wgs --clean --local
+
+rule CARD_load_DB:
+    input:
+        get_card_db_file(),
+    output:
+        touch("logs/CARD_load_DB.done"),
+    log:
+        "logs/CARD_load_DB.log",
+    conda:
+        "../envs/card.yaml"
+    shell:
+        "rgi load -i {input} > {log} 2>&1"# --local
+
+
+rule CARD_run:
+    input:
+        faa=rules.prokka.output.faa[0],
+        db=rules.CARD_load_DB.output
+    output:
+        txt="results/{date}/analysis/card/{sample}/{sample}.txt",
+    params:
+        path_wo_ext=lambda wildcards, output: Path(output.txt).with_suffix('')
+    log:
+        "logs/{date}/analysis/card/{sample}.log",
+    threads: 12
+    conda:
+        "../envs/card.yaml"
+    shell:
+        "rgi main -i {input.faa} -o {params.path_wo_ext} -t protein "
+        "-a DIAMOND -d wgs --clean > {log} 2>&1"# --local
 
 
 rule clone_plm_arg:
@@ -116,7 +218,7 @@ rule run_plm_arg:
         model=get_plm_arg_model_file(),
         reg=get_plm_arg_regression_file(),
         main=get_plm_arg_main(),
-        fasta=rules.prokka.output.faa,
+        fasta=rules.prokka.output.faa[0],
     output:
         tsv="results/{date}/analysis/plm_arg/{sample}/{sample}.tsv",
     params:

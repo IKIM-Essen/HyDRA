@@ -57,8 +57,8 @@ rule move_and_gz_assembly:
     input:
         "results/{date}/assembly/{sample}/assembly.fasta"
     output:
-        fa=temp("results/{date}/out/assembly/{sample}_assembly.fasta"),
-        fa_gz="results/{date}/out/assembly/{sample}_assembly.fasta.gz",
+        fa=temp("results/{date}/out/assembly/{sample}.fa"),
+        fa_gz="results/{date}/out/assembly/{sample}.fa.gz",
     log:
         "logs/{date}/assembly/move_gzip/{sample}.log",
     conda:
@@ -67,7 +67,7 @@ rule move_and_gz_assembly:
         "(cp {input} {output.fa} && "
         "gzip -k {output.fa}) > {log} 2>&1"
 
-
+"""
 ## assembly QC
 if config["checkm2_db"]["use_local"]:
 
@@ -123,7 +123,7 @@ rule checkm2_run:
         # --remove_intermediates-x fa.gz
 
 
-"""
+
 rule unicycler:
     input:
         # R1 and R2 short reads:

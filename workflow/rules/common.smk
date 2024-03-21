@@ -101,6 +101,26 @@ def get_checkm2_tar():
     return path
 
 
+def get_genomad_DB_file():
+    path = "{}genomad_db/names.dmp".format(get_resource_path())
+    return path
+
+
+def get_card_db_file():
+    name = config["card"]["data"]["dbfile"]
+    path = "{}CARD_db/{}".format(get_resource_path(), name)
+    return path
+
+
+def get_card_tar_file():
+    if config["card"]["data"]["use_local"]:
+        name = Path(config["card"]["data"]["local_path"]).name
+    else:
+        name = "card-data.tar.bz2"
+    #path = "{}CARD_db/{}".format(get_resource_path(), name)
+    return name
+
+
 def get_plm_arg_main():
     script = config["plm_arg"]["main"]
     script_path = "{}{}".format(get_resource_path(), script)
