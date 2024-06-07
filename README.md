@@ -99,22 +99,22 @@ HyDRA is released under the [BSD-2 Clause](https://www.open-xchange.com/hubfs/2_
 For any questions, or feedback, please contact the project maintainer at josefa.welling@uk-essen.de. We appreciate your input and support in using and improving HyDRA.
 
 ### Tools
-[CARD & RGI] (https://doi.org/10.1093/nar/gkac920)<br />
-[Checkm2] (https://doi.org/10.1038/s41592-023-01940-w)<br />
-[Chopper] (https://doi.org/10.1093/bioinformatics/btad311)<br />
+[CARD & RGI](https://doi.org/10.1093/nar/gkac920)<br />
+[Checkm2](https://doi.org/10.1038/s41592-023-01940-w)<br />
+[Chopper](https://doi.org/10.1093/bioinformatics/btad311)<br />
 [fastp](https://doi.org/10.1093/bioinformatics/bty560)<br />
 [FastQC](https://github.com/s-andrews/FastQC)<br />
-[geNomad] (https://doi.org/10.1038/s41587-023-01953-y)<br />
+[geNomad](https://doi.org/10.1038/s41587-023-01953-y)<br />
 [minimap2](https://doi.org/10.1093/bioinformatics/bty191)<br />
 [MultiQC](https://doi.org/10.1093%2Fbioinformatics%2Fbtw354)<br />
-[Nanoplot] (https://doi.org/10.1093/bioinformatics/btad311)<br />
+[Nanoplot](https://doi.org/10.1093/bioinformatics/btad311)<br />
 [pandas](https://doi.org/10.5281/zenodo.3509134)<br />
-[PLM-ARG] (https://doi.org/10.1093/bioinformatics/btad690)<br />
-[Porechop_ABI] (https://doi.org/10.1093/bioadv/vbac085)<br />
-[Prokka] (https://doi.org/10.1093/bioinformatics/btu153)<br />
-[QUAST] (https://doi.org/10.1093/bioinformatics/btt086)<br />
+[PLM-ARG](https://doi.org/10.1093/bioinformatics/btad690)<br />
+[Porechop_ABI](https://doi.org/10.1093/bioadv/vbac085)<br />
+[Prokka](https://doi.org/10.1093/bioinformatics/btu153)<br />
+[QUAST](https://doi.org/10.1093/bioinformatics/btt086)<br />
 [samtools](https://doi.org/10.1093/gigascience/giab008)<br />
-[Unicycler] (https://doi.org/10.1371/journal.pcbi.1005595)<br />
+[Unicycler](https://doi.org/10.1371/journal.pcbi.1005595)<br />
 
 ### Literature
 [Not here yet](https://www.lipsum.com/feed/html)
