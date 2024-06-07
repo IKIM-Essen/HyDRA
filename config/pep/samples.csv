@@ -1,7 +1,2 @@
-sample_name,ont,illumina_R1,illumina_R2,species_genome_size
-SRR1272887,,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1272887_1.fastq.gz,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1272887_2.fastq.gz,4000
-SRR1514752,,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1514752_1.fastq.gz,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1514752_2.fastq.gz,4000
-SRR1569796,,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1569796_1.fastq.gz,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1569796_2.fastq.gz,4000
-SRR1575973,,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1575973_1.fastq.gz,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1575973_2.fastq.gz,4000
-SRR1709558,,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1709558_1.fastq.gz,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1709558_2.fastq.gz,4000
-SRR1763858,,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1763858_1.fastq.gz,/groups/ds/resistance_cefiderocol/benchmark_data/example-lmonocytogenes-32/data/SRR1763858_2.fastq.gz,4000
+sample_name,long,shortR1,shortR2
+sample1,path/to/your/long_read/fastq/sample1.fastq.gz,path/to/your/short_read/fastq/sample1_R1.fastq.gz,path/to/your/short_read/fastq/sample1_R2.fastq.gz

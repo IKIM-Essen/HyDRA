@@ -13,9 +13,14 @@
 !workflow
 !workflow/*
 !workflow/envs/*
-!workflow/report/*
+workflow/report/*
 !workflow/rules/*
-!workflow/scripts/*
+workflow/rules/metagenome_analysis.smk
+workflow/rules/reporting.smk
+workflow/scripts/*
+!workflow/scripts/extract_plm_arg.py
+!workflow/scripts/plot_resistance.py
+!workflow/scripts/assembly_summary.py
 !.gitignore
 !.snakemake-workflow-catalog.yml
 !LICENSE

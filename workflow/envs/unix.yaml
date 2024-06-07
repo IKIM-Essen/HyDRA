@@ -6,3 +6,4 @@ dependencies:
   - wget
   - git
   - tar
+  - pigz

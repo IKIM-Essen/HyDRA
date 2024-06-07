@@ -1,4 +1,0 @@
-channels:
-  - bioconda
-dependencies:
-  - fastq-filter = 0.3.0

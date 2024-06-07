@@ -1,5 +1,7 @@
 channels:
+  - conda-forge
   - bioconda
+  - nodefaults
 dependencies:
-  - unicycler = 0.4.4
-  - blast = 2.5.0
+  - unicycler = 0.4.8
+

@@ -1,5 +1,6 @@
 # fastp in paired-end mode for Illumina paired-end data
 if get_has_short_reads():
+
     rule fastp:
         input:
             sample=rules.copy_fastq_illumina.output.fastqs,
@@ -14,15 +15,16 @@ if get_has_short_reads():
             json="results/{date}/trimmed/fastp/{sample}.fastp.json",
         params:
             adapters=get_adapters(),
-            extra="--overrepresentation_analysis --qualified_quality_phred {phred} --length_required {minlen}".format(
+            extra="--overrepresentation_analysis -e {phred} -l {minlen} -u 20 -q 20".format(
                 phred=(config["quality_criteria"]["illumina"]["min_quality"]),
                 minlen=(config["quality_criteria"]["illumina"]["min_length"]),
             ),
         log:
             "logs/{date}/illumina/fastp/{sample}.log",
-        threads: 4
+        threads: 32
         wrapper:
-            "v3.3.6/bio/fastp"
+            "v3.10.2/bio/fastp"
+
 
 if get_has_long_reads():
 
@@ -32,13 +34,13 @@ if get_has_long_reads():
         output:
             adapt_trim=temp("results/{date}/trimmed/porechop/{sample}.fastq.gz"),
         log:
-            "logs/{date}/ont/porechop/{sample}.log", # chnage to qc/ont/
-        threads: 4
+            "logs/{date}/ont/porechop/{sample}.log",  # chnage to qc/ont/
+        threads: 32
         conda:
             "../envs/porechop.yaml"
         shell:
-            "porechop_abi -abi -i {input} -o {output.adapt_trim} > {log} 2>&1"
-
+            "porechop_abi -abi -i {input} --threads {threads} "
+            "-o {output.adapt_trim} > {log} 2>&1"
 
     # Prowler testen
     # faster version of NanoFilt
@@ -52,7 +54,7 @@ if get_has_long_reads():
             minlen=config["quality_criteria"]["ont"]["min_length"],
         log:
             "logs/{date}/ont/chopper/{sample}.log",
-        threads: 4
+        threads: 32
         conda:
             "../envs/chopper.yaml"
         shell:

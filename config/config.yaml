@@ -4,10 +4,10 @@
 pepfile: config/pep/config.yaml
 
 # date of analysis or project name
-run_date: "lmono_32"
+run_date: "project"
 
 # choose between short, long or hybrid
-assembly_type: "short"
+assembly_type: "hybrid"
 
 data_handling:
   resources: "resources/"
@@ -19,8 +19,8 @@ adapter_seqs: "-a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG -g GTCTCGTGGGCTCGGAGATGTGTAT
 
 quality_criteria:
   illumina:
-    min_quality: 20
-    min_length: 15
+    min_quality: 30
+    min_length: 30
   ont:
     min_quality: 15
     min_length: 500
@@ -29,6 +29,13 @@ checkm2_db:
   use_local: True
   local_path: "/groups/ds/databases_refGenomes/databases/latest/checkM2/checkm2_database.tar.gz"
   db_file: "CheckM2_database/uniref100.KO.1.dmnd"
+
+card:
+  data:
+    use_local: True
+    dbfile: "card.json"
+    local_path: "/groups/ds/databases_refGenomes/databases/latest/card/broadstreet-v3.2.9.tar.bz2"
+    url: "https://card.mcmaster.ca/latest/data"
 
 plm_arg:
   git: "https://github.com/Junwu302/PLM-ARG.git"
@@ -41,11 +48,3 @@ plm_arg:
     use_local: True
     local_path: "/groups/ds/databases_refGenomes/databases/latest/PLM-ARG/regression/esm1b_t33_650M_UR50S-contact-regression.pt"
     url: "https://dl.fbaipublicfiles.com/fair-esm/regression/esm1b_t33_650M_UR50S-contact-regression.pt"
-
-
-#ill_data_path: "data/illumina/"
-
-#"/projects/seqlab/GridIONs/20210713_JW001_KID1-3_Ec_ZKB_NBD104/20210713_JW001_KID1-3_Ec_ZKB_NBD104/20210713_1530_X2_FAP91220_d47f932e/sequencing_summary_FAP91220_e888cbe6.txt"
-#summary_ont_run1: "data/ont/run1/sequencing_summary.txt"
-#"/projects/seqlab/GridIONs/20211115_SM0006_JW0002_CefRes_strains_20211115/SM0006_JW0002_CefRes_strains_20211115/20211115_1648_X1_FAP91415_d0c3f758/sequencing_summary_FAP91415_f2d1671c.txt"
-#summary_ont_run2: "data/ont/run2/sequencing_summary.txt"

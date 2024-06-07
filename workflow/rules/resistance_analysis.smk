@@ -1,2 +1,0 @@
-# PLM-ARG
-# resistance
