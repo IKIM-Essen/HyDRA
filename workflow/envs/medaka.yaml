@@ -1,7 +1,0 @@
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - medaka = 1.0.3
-  - tensorflow = 1.14.0
-  - h5py = 2.7.1

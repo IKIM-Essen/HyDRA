@@ -3,4 +3,5 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - porechop_abi = 0.5.0
+  - minimap2 = 2.28
+  - samtools = 1.20

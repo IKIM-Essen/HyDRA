@@ -1,180 +1,128 @@
 from pathlib import Path
 
-rule unicycler:
+ASSEMBLY_TYPE = get_assembly_type()
+
+if ASSEMBLY_TYPE == "hybrid":
+
+    rule unicycler_hybrid:
+        input:
+            # R1 and R2 short reads:
+            paired=rules.fastp.output.trimmed,
+            # Long reads:
+            long=rules.chopper.output.trim_filt,
+        output:
+            assembly=temp("results/{date}/assembly/{sample}/assembly.fasta"),
+        log:
+            "logs/{date}/assembly/unicycler_hybrid/{sample}.log",
+        params:
+            extra=" --min_fasta_length 500 ",
+        threads: 64
+        wrapper:
+            "v3.10.2/bio/unicycler"
+
+elif ASSEMBLY_TYPE == "short":
+
+    rule unicycler_short:
+        input:
+            # R1 and R2 short reads:
+            paired=rules.fastp.output.trimmed,
+        output:
+            assembly=temp(get_assembly),
+        log:
+            "logs/{date}/assembly/unicycler_short/{sample}.log",
+        params:
+            extra="--min_fasta_length 300 --keep 0",
+        threads: 64
+        wrapper:
+            "v3.10.2/bio/unicycler"
+
+elif ASSEMBLY_TYPE == "long":
+
+    rule unicycler_long:
+        input:
+            # Long reads:
+            long=rules.chopper.output.trim_filt,
+        output:
+            assembly=temp(get_assembly),
+        log:
+            "logs/{date}/assembly/unicycler_long/{sample}.log",
+        params:
+            extra="--min_fasta_length 300 --keep 0",
+        threads: 64
+        wrapper:
+            "v3.10.2/bio/unicycler"
+
+
+rule assembly_gz:
     input:
-        # R1 and R2 short reads:
-        paired_1 = "results/preprocess_ill/{strain}/{strain}_R1_trimmed.fastq.gz", #"results/cutadapt/{strain}/{strain}_R1_trimmed.fastq.gz",
-        paired_2 = "results/preprocess_ill/{strain}/{strain}_R2_trimmed.fastq.gz", #"results/cutadapt/{strain}/{strain}_R2_trimmed.fastq.gz",
-        # Long reads:
-        long = "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
+        get_assembly,
     output:
-        fasta = "results/assembly/{strain}/{strain}_assembly.fasta",
-        gfa = "results/assembly/{strain}/{strain}_assembly.gfa"
+        fa_gz="results/{date}/out/assembly/{sample}.fa.gz",
     log:
-        "logs/unicycler/{strain}.log" #automated log file - we need to mv it
-    params:
-        extra = "--min_fasta_length 500",
-        outdir = "results/assembly/{strain}/unicycler/",
-        log_old = "results/assembly/{strain}/unicycler/unicycler.log", # path.join(outdir, "unicycler.log")
-        fasta_old = "results/assembly/{strain}/unicycler/assembly.fasta",
-        gfa_old = "results/assembly/{strain}/unicycler/assembly.gfa"
+        "logs/{date}/assembly/gz_{sample}.log",
+    threads: 20
     conda:
-        "../envs/unicycler.yaml"
+        "../envs/unix.yaml"
     shell:
-        "unicycler -1 {input.paired_1} -2 {input.paired_2} -l {input.long} {params.extra} -o {params.outdir} && "#2> {log}"
-        "mv {params.log_old} {log} && "
-        "mv {params.fasta_old} {output.fasta} && "
-        "mv {params.gfa_old} {output.gfa}"
+        "pigz -c {input} > {output.fa_gz} 2> {log}"
+
+
+if ASSEMBLY_TYPE in ["hybrid", "short"]:
+
+    rule map_ill_to_assembly:
+        input:
+            contigs=get_assembly,
+            fastqs=rules.fastp.output.trimmed,
+        output:
+            "results/{date}/report_prerequisites/assembly/{sample}_short_reads_mapped.txt",
+        threads: 64
+        log:
+            "logs/{date}/assembly/{sample}_mapping_short_reads.log",
+        conda:
+            "../envs/minimap2.yaml"
+        shell:
+            "(minimap2 -ax sr -t {threads} {input.contigs} {input.fastqs} | "
+            "samtools view -c -F 4 --threads {threads} -o {output}) > {log} 2>&1"
+
+
+if ASSEMBLY_TYPE in ["hybrid", "long"]:
+
+    # returns number of primary mapped reads
+    rule map_ont_to_assembly:
+        input:
+            contigs=get_assembly,
+            fastq=rules.chopper.output.trim_filt,
+        output:
+            aln="results/{date}/report_prerequisites/assembly/{sample}_long_reads_mapped.txt",
+        threads: 64
+        log:
+            "logs/{date}/assembly/{sample}_mapping_long_reads.log",
+        conda:
+            "../envs/minimap2.yaml"
+        shell:
+            "(minimap2 -ax map-ont -t {threads} {input.contigs} {input.fastq} | "
+            "samtools view -c -F 2308 --threads {threads} -o {output}) > {log} 2>&1"
+
 
 """
-# use part of spades for unicycler
-rule spades:
+rule assembly_summary:
     input:
-        r1 = "results/cutadapt/{strain}/{strain}_R1_trimmed.fastq.gz",
-        r2 = "results/cutadapt/{strain}/{strain}_R2_trimmed.fastq.gz",
-        ont = "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
+        qc_csv=rules.qc_summary.output.csv,
+        asbl=expand(
+            "results/{{date}}/report_prerequisites/assembly/{sample}_megahit.log",
+            sample=get_samples(),
+        ),
+        mapped=expand(
+            "results/{{date}}/report_prerequisites/assembly/{sample}_reads_mapped.txt",
+            sample=get_samples(),
+        ),
     output:
-        scaf = "results/spades/{strain}/scaffolds.fasta"
+        csv="results/{date}/output/report/all/assembly_summary.csv",
+        vis_csv=temp("results/{date}/output/report/all/assembly_summary_visual.csv"),
     log:
-        "logs/spades/{strain}.log"
-    params:
-        isolate = "--isolate",
-        outdir = lambda wildcards, output: Path(output.scaf).parent
+        "logs/{date}/report/assembly_summary.log",
     conda:
-        "../envs/spades.yaml"
-    shell:
-        "spades.py --pe1-1 {input.r1} --pe1-2 {input.r2} {params.isolate} "
-        "--nanopore {input.ont} -o {params.outdir}/ > {log} 2>&1"
-
-rule rename_scaffolds:
-    input:
-        "results/spades/{strain}/scaffolds.fasta"
-    output:
-        "results/spades/assembly/{strain}/{strain}_scaffolds.fasta"
-    shell:
-        "cp {input} {output}"
-
-rule rename_assembly:
-    input:
-        "results/unicycler/{strain}/assembly.fasta"
-    output:
-        "results/assembly/{strain}/{strain}_assembly.fasta"
-    shell:
-        "cp {input} {output}"
-
-rule canu:
-    input:
-        "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
-    output:
-        outfile = "results/canu/{strain}/{strain}.contigs.fasta"
-    params:
-        size = get_genome_size,
-        outdir = lambda wildcards, output: Path(output.outfile).parent
-    log:
-        "logs/canu/{strain}.log"
-    threads: 16
-    conda:
-        "../envs/canu.yaml"
-    shell:
-        "canu -p {wildcards.strain} -d {params.outdir}/ genomeSize={params.size}k -nanopore {input} > {log} 2>&1"
-
-rule bwa_index:
-    input:
-        "results/canu/{strain}/{strain}.contigs.fasta"
-    output:
-        "results/canu/{strain}/{strain}.contigs.fasta.amb",
-        "results/canu/{strain}/{strain}.contigs.fasta.ann",
-        "results/canu/{strain}/{strain}.contigs.fasta.bwt",
-        "results/canu/{strain}/{strain}.contigs.fasta.pac",
-        "results/canu/{strain}/{strain}.contigs.fasta.sa"
-    log:
-        "logs/bwa_index/{strain}.log"
-    params:
-        prefix="results/canu/{strain}/{strain}.contigs.fasta",
-        algorithm="bwtsw"
-    wrapper:
-        "0.84.0/bio/bwa/index"
-
-rule bwa_mem:
-    input:
-        reads=["results/cutadapt/{strain}/{strain}_R1_trimmed.fastq.gz", "results/cutadapt/{strain}/{strain}_R2_trimmed.fastq.gz"],
-        ind = "results/canu/{strain}/{strain}.contigs.fasta.amb"
-    output:
-        "results/bwa/{strain}/{strain}.bam"
-    log:
-        "logs/bwa_mem/{strain}.log"
-    params:
-        index="results/canu/{strain}/{strain}.contigs.fasta",
-        extra="",
-        sorting="none",  # Can be 'none', 'samtools' or 'picard'.
-        sort_order="queryname",  # Can be 'queryname' or 'coordinate'.
-        sort_extra="",  # Extra args for samtools/picard.
-        tmp_dir=""  # Path to temp dir. (optional)
-    threads: 8
-    wrapper:
-        "0.84.0/bio/bwa/mem"
-
-rule samtools_sort:
-    input:
-        "results/bwa/{strain}/{strain}.bam"
-    output:
-        "results/bwa/{strain}/{strain}.sorted.bam"
-    params:
-        extra = "-m 4G",
-        tmp_dir = "/tmp/"
-    threads:  # Samtools takes additional threads through its option -@
-        8     # This value - 1 will be sent to -@.
-    wrapper:
-        "0.84.0/bio/samtools/sort"
-
-rule samtools_index:
-    input:
-        "results/bwa/{strain}/{strain}.sorted.bam"
-    output:
-        "results/bwa/{strain}/{strain}.sorted.bam.bai"
-    log:
-        "logs/samtools_index/{strain}.log"
-    params:
-        "" # optional params string
-    threads:  # Samtools takes additional threads through its option -@
-        4     # This value - 1 will be sent to -@
-    wrapper:
-        "0.84.0/bio/samtools/index"
-
-rule pilon:
-    input:
-        genome = "results/canu/{strain}/{strain}.contigs.fasta",
-        frags = "results/bwa/{strain}/{strain}.sorted.bam",
-        ind_frags = "results/bwa/{strain}/{strain}.sorted.bam.bai"
-    output:
-        outfile = "results/pilon/{strain}/{strain}.fasta"
-    params:
-        outdir = lambda wildcards, output: Path(output.outfile).parent
-    log:
-        "logs/pilon/{strain}.log"
-    conda:
-        "../envs/pilon.yaml"
-    shell:
-        "pilon --genome {input.genome} --frags {input.frags} --output {wildcards.strain} "
-        "--outdir {params.outdir}/ > {log} 2>&1"
-
-rule flye:
-    input:
-        "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
-    output:
-        outfile = "results/flye/{strain}/assembly.fasta"
-    params:
-        outdir = lambda wildcards, output: Path(output.outfile).parent
-    shell:
-        "flye --nano-raw {input} --genome-size 4.6m -o {params.outdir}/"
-
-rule medaka:
-    input:
-        "results/nanofilt/trimmed/{strain}_trimmed.fastq.gz"
-    output:
-        "results/medaka/{strain}_list_models.txt"
-    conda:
-        "../envs/medaka.yaml"
-    shell:
-        "medaka tools list_models > {output}"
+        "../envs/python.yaml"
+    script:
+        "../scripts/assembly_summary.py
 """
