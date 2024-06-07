@@ -154,7 +154,7 @@ if config["plm_arg"]["model"]["use_local"]:
             model=get_plm_arg_model_file(),
         params:
             local=config["plm_arg"]["model"]["local_path"],
-            folder=get_plm_arg_model_path(),
+            folder=lambda wildcards, output: Path(output.model).parent,
         log:
             "logs/plm_arg_model_local_copy.log",
         conda:
@@ -171,7 +171,7 @@ else:
             model=get_plm_arg_model_file(),
         params:
             download=config["plm_arg"]["model"]["url"],
-            folder=get_plm_arg_model_path(),
+            folder=lambda wildcards, output: Path(output.model).parent,
         log:
             "logs/plm_arg_model_download.log",
         conda:
@@ -190,7 +190,7 @@ if config["plm_arg"]["regression"]["use_local"]:
             reg=get_plm_arg_regression_file(),
         params:
             local=config["plm_arg"]["regression"]["local_path"],
-            folder=get_plm_arg_model_path(),
+            folder=lambda wildcards, output: Path(output.reg).parent,
         log:
             "logs/plm_arg_regression_local_copy.log",
         conda:
@@ -207,7 +207,7 @@ else:
             reg=get_plm_arg_regression_file(),
         params:
             download=config["plm_arg"]["regression"]["url"],
-            folder=get_plm_arg_model_path(),
+            folder=lambda wildcards, output: Path(output.reg).parent,
         log:
             "logs/plm_arg_regression_download.log",
         conda:

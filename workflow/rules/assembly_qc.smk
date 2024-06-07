@@ -1,4 +1,4 @@
-#from pathlib import Path
+# from pathlib import Path
 
 ## assembly QC
 if config["checkm2_db"]["use_local"]:
@@ -9,7 +9,7 @@ if config["checkm2_db"]["use_local"]:
             tar=temp(get_checkm2_tar()),
         params:
             local=config["checkm2_db"]["local_path"],
-            resource_folder= get_resource_path(),
+            resource_folder=lambda wildcards, output: Path(output.dbfile).parent.parent,
         log:
             "logs/checkm2_DB_local_copy.log",
         conda:
@@ -24,8 +24,7 @@ else:
         output:
             dbfile=get_checkm2_db(),
         params:
-            direct=get_resource_path(),
-            #lambda wildcards, output: Path(output.dbfile).parent.parent,
+            direct=lambda wildcards, output: Path(output.dbfile).parent.parent,
         log:
             "logs/checkm2_DB_download.log",
         conda:
@@ -60,8 +59,17 @@ rule quast:
         fasta=get_assembly,
         gff=rules.prokka.output.faa[1],
     output:
-        multiext("results/{date}/qc/quast/{sample}/report.", "html", "tex", "txt", "pdf", "tsv"),
-        multiext("results/{date}/qc/quast/{sample}/transposed_report.", "tex", "txt", "tsv"),
+        multiext(
+            "results/{date}/qc/quast/{sample}/report.",
+            "html",
+            "tex",
+            "txt",
+            "pdf",
+            "tsv",
+        ),
+        multiext(
+            "results/{date}/qc/quast/{sample}/transposed_report.", "tex", "txt", "tsv"
+        ),
         multiext(
             "results/{date}/qc/quast/{sample}/basic_stats/",
             "cumulative_plot.pdf",
