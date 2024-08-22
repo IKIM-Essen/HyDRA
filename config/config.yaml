@@ -4,15 +4,15 @@
 pepfile: config/pep/config.yaml
 
 # date of analysis or project name
-run_date: "project"
+run_date: "test"
 
 # choose between short, long or hybrid
-assembly_type: "hybrid"
+assembly_type: "long"
 
 data_handling:
   resources: "resources/"
   data:
-    ont: "data/ont/"
+    ont: "data/"
     illumina: "data/illumina/"
 
 adapter_seqs: "-a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG -g GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG"
@@ -32,9 +32,8 @@ checkm2_db:
 
 card:
   data:
-    use_local: True
+    version: "v3.2.9"
     dbfile: "card.json"
-    local_path: "/groups/ds/databases_refGenomes/databases/latest/card/broadstreet-v3.2.9.tar.bz2"
     url: "https://card.mcmaster.ca/latest/data"
 
 plm_arg:

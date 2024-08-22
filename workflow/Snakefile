@@ -10,26 +10,29 @@ pepfile: config["pepfile"]
 include: "rules/common.smk"
 include: "rules/local_data.smk"
 include: "rules/trimming_filtering.smk"
+include: "rules/analysis_reads.smk"
 include: "rules/qualitycontrol.smk"
-include: "rules/assembly.smk"
-include: "rules/analysis.smk"
-include: "rules/assembly_qc.smk"
+#include: "rules/assembly.smk"
+#include: "rules/analysis.smk"
+#include: "rules/assembly_qc.smk"
 
 
 rule all:
     input:
-        expand(
-            "results/{date}/analysis/card/{sample}/{sample}.txt",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/analysis/genomad/{sample}/{sample}_summary/{sample}_plasmid_summary.tsv",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
         expand("results/{date}/report/multiqc.html", date=get_run_date()),
         expand(
+            "results/{date}/analysis/resistance/{sample}/{sample}.allele_mapping_data.txt",
+            date=get_run_date(),
+            sample=get_samples(),
+        ),
+        expand(
+            "results/{date}/analysis/plasmids/{sample}/{sample}_summary/{sample}_plasmid_summary.tsv",
+            date=get_run_date(),
+            sample=get_samples(),
+        ),
+        
+
+'''     expand(
             "results/{date}/out/assembly/{sample}.fa.gz",
             date=get_run_date(),
             sample=get_samples(),
@@ -59,3 +62,4 @@ rule all:
             date=get_run_date(),
             sample=get_samples(),
         ),
+'''

@@ -30,7 +30,8 @@ if get_has_long_reads():
 
     rule porechop_abi:
         input:
-            rules.copy_fastq_ont.output.fastq,
+            get_ont_fastq,
+            #rules.copy_fastq_ont.output.fastq,
         output:
             adapt_trim=temp("results/{date}/trimmed/porechop/{sample}.fastq.gz"),
         log:
@@ -48,7 +49,7 @@ if get_has_long_reads():
         input:
             rules.porechop_abi.output.adapt_trim,
         output:
-            trim_filt=temp("results/{date}/trimmed/chopper/{sample}.fastq.gz"),
+            trim_filt="results/{date}/trimmed/chopper/{sample}.fastq.gz",
         params:
             quality=config["quality_criteria"]["ont"]["min_quality"],
             minlen=config["quality_criteria"]["ont"]["min_length"],

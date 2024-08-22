@@ -128,6 +128,12 @@ def get_card_tar_file():
     return name
 
 
+def get_card_annotation_file():
+    version = config["card"]["data"]["version"]
+    path = "{}CARD_db/card_database_{}.fasta".format(get_resource_path(), version)
+    return path
+
+
 def get_plm_arg_main():
     script = config["plm_arg"]["main"]
     script_path = "{}{}".format(get_resource_path(), script)

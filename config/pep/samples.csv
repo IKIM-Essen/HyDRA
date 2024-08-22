@@ -1,2 +1,2 @@
 sample_name,long,shortR1,shortR2
-sample1,path/to/your/long_read/fastq/sample1.fastq.gz,path/to/your/short_read/fastq/sample1_R1.fastq.gz,path/to/your/short_read/fastq/sample1_R2.fastq.gz
+115,/local/work/josefa/HyDRA/data/test/115.fastq.gz,,
