@@ -9,8 +9,8 @@ module_order:
       name: "Short Reads Preprocessing"
       target: "fastp"
   - nanostats:
-    name: "Long Reads QC & Preprocessing"
-    target: "nanostats"
+      name: "Long Reads QC & Preprocessing"
+      target: "nanostats"
 
 report_section_order:
   fastqc_sequence_length_distribution: remove
@@ -32,6 +32,8 @@ fn_clean_exts:
   - "_R2"
   - ".1"
   - ".2"
+  - "_NanoStats.txt"
+  - "_NanoPlot-report.html"
   
 # customising general Statistics
 table_columns_visible:
