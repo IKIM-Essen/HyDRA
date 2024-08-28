@@ -21,6 +21,7 @@ workflow/scripts/*
 !workflow/scripts/extract_plm_arg.py
 !workflow/scripts/plot_resistance.py
 !workflow/scripts/assembly_summary.py
+!workflow/scripts/qc_summary.py
 !.gitignore
 !.snakemake-workflow-catalog.yml
 !LICENSE
