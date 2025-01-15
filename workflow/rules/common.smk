@@ -55,7 +55,7 @@ def get_ill_fastqs(wildcards):
 
 
 def get_ont_fastq(wildcards):
-    return (pep.sample_table.loc[wildcards.sample]["long"],)
+    return pep.sample_table.loc[wildcards.sample]["long"]
 
 
 def get_adapters():
@@ -68,22 +68,22 @@ def get_multiqc_config():
 
 def get_multiqc_input(wildcards):
     if get_has_short_reads():
-        short_in=expand(
-                [
-                    "results/{{date}}/trimmed/fastp/{sample}.fastp.json",
-                    "results/{{date}}/qc/fastqc/{sample}/ill_{sample}_{read}_fastqc.zip",
-                ],
-                sample=get_samples(),
-                read=["1", "2"],
-            )
+        short_in = expand(
+            [
+                "results/{{date}}/trimmed/fastp/{sample}.fastp.json",
+                "results/{{date}}/qc/fastqc/{sample}/ill_{sample}_{read}_fastqc.zip",
+            ],
+            sample=get_samples(),
+            read=["1", "2"],
+        )
 
     if get_has_long_reads():
-        long_in=expand(
-                [
-                    "results/{{date}}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
-                ],
-                sample=get_samples(),
-            )
+        long_in = expand(
+            [
+                "results/{{date}}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
+            ],
+            sample=get_samples(),
+        )
     if get_assembly_type() == "hybrid":
         short_in.extend(long_in)
         return short_in
@@ -124,7 +124,7 @@ def get_card_tar_file():
         name = Path(config["card"]["data"]["local_path"]).name
     else:
         name = "card-data.tar.bz2"
-    #path = "{}CARD_db/{}".format(get_resource_path(), name)
+    # path = "{}CARD_db/{}".format(get_resource_path(), name)
     return name
 
 

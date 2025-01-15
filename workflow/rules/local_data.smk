@@ -24,7 +24,7 @@ if get_has_short_reads():
         shell:
             "(mkdir -p {params.outdir} && "
             "(cd {params.indir} && "
-            "tar cpfz - {input.infiles}) | "
+            "tar cpfz - {params.infiles}) | "
             "(cd {params.outdir} ; tar xpfz - )) > {log} 2>&1"
 
 
@@ -47,5 +47,5 @@ if get_has_long_reads():
         shell:
             "(mkdir -p {params.outdir} && "
             "(cd {params.indir} && "
-            "tar cpfz - {input.infile}) | "
+            "tar cpfz - {params.infile}) | "
             "(cd {params.outdir} ; tar xpfz - )) > {log} 2>&1"
