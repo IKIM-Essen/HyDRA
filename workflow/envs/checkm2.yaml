@@ -3,4 +3,6 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - checkm2 = 1.0.1
+  - checkm2 = 1.0.2
+  - python>=3.7, <3.9
+  - numpy=1.19.2

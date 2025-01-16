@@ -11,10 +11,8 @@ if get_has_short_reads():
             ],
         params:
             indir=lambda wildcards, input: Path(input.fastqs[0]).parent,
-            infiles=[
-                lambda wildcards, input: Path(input.fastqs[0]).name,
-                lambda wildcards, input: Path(input.fastqs[1]).name,
-            ],
+            infile_r1=lambda wildcards, input: Path(input.fastqs[0]).name,
+            infile_r2=lambda wildcards, input: Path(input.fastqs[1]).name,
             outdir=lambda wildcards, output: Path(output.fastqs[0]).parent,
         log:
             "logs/{date}/copy_data/{sample}_ill.log",
@@ -24,7 +22,7 @@ if get_has_short_reads():
         shell:
             "(mkdir -p {params.outdir} && "
             "(cd {params.indir} && "
-            "tar cpfz - {input.infiles}) | "
+            "tar cpfz - {params.infile_r1} {params.infile_r2}) | "
             "(cd {params.outdir} ; tar xpfz - )) > {log} 2>&1"
 
 
@@ -47,5 +45,5 @@ if get_has_long_reads():
         shell:
             "(mkdir -p {params.outdir} && "
             "(cd {params.indir} && "
-            "tar cpfz - {input.infile}) | "
+            "tar cpfz - {params.infile}) | "
             "(cd {params.outdir} ; tar xpfz - )) > {log} 2>&1"
