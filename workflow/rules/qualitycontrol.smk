@@ -10,7 +10,7 @@ if get_has_short_reads():
             extra="--quiet",
         log:
             "logs/{date}/illumina/fastqc/{sample}_{read}.log",
-        threads: 20
+        threads: 10
         resources:
             mem_mb=1024,
         wrapper:
