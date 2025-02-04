@@ -19,43 +19,48 @@ include: "rules/assembly_qc.smk"
 rule all:
     input:
         expand(
+            "results/{date}/analysis/prokka/{sample}/{sample}.faa",
+            date=get_run_date(),
+            sample=get_samples(),
+        ),
+        expand(
             "results/{date}/analysis/card/{sample}/{sample}.txt",
             date=get_run_date(),
             sample=get_samples(),
         ),
-        expand(
-            "results/{date}/analysis/genomad/{sample}/{sample}_summary/{sample}_plasmid_summary.tsv",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
-        expand("results/{date}/report/multiqc.html", date=get_run_date()),
-        expand(
-            "results/{date}/out/assembly/{sample}.fa.gz",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/report_prerequisites/assembly/{sample}_short_reads_mapped.txt",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/report_prerequisites/assembly/{sample}_long_reads_mapped.txt",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/qc/checkm2/{sample}/quality_report.tsv",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/analysis/plm_arg/{sample}/{sample}_arg.csv",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
-        expand(
-            "results/{date}/qc/quast/{sample}/report.txt",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
+        # expand(
+        #     "results/{date}/analysis/genomad/{sample}/{sample}_summary/{sample}_plasmid_summary.tsv",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),
+        # expand("results/{date}/report/multiqc.html", date=get_run_date()),
+        # expand(
+        #     "results/{date}/out/assembly/{sample}.fa.gz",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),
+        # expand(
+        #     "results/{date}/report_prerequisites/assembly/{sample}_short_reads_mapped.txt",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),
+        # expand(
+        #     "results/{date}/report_prerequisites/assembly/{sample}_long_reads_mapped.txt",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),
+        # expand(
+        #     "results/{date}/qc/checkm2/{sample}/quality_report.tsv",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),
+        # expand(
+        #     "results/{date}/analysis/plm_arg/{sample}/{sample}_arg.csv",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),
+        # expand(
+        #     "results/{date}/qc/quast/{sample}/report.txt",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),

@@ -3,7 +3,18 @@
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
 [![GitHub actions status](https://github.com/<owner>/<repo>/workflows/Tests/badge.svg?branch=main)](https://github.com/<owner>/<repo>/actions?query=branch%3Amain+workflow%3ATests)
 
+## HyDRA for alrady assembled genomes
+**This version has been modified so that it can process already assembled genomes**
+- The complete HyDRA range of functions is not available
+- Only CARD and prokka annotation of already assembled genomes will be generated
 
+### How to Use
+1. Add filenames (without endings) of fasta files to `/HyDRA/config/pep/samples.csv` -> `sample_name`. The other columns of the table will be ignored.
+2. Set path of the fasta files at  `/HyDRA/workflow/rules/analysis.smk` -> `prokka` -> `input`
+3. Set `run_date` at `/HyDRA/config/config.yaml`
+4. Run `snakemake --cores all --use-conda` in the terminal
+5. Retrieve results in the `/HyDRA/results` folder
+---
 HyDRA (**Hy**brid ***D**e novo* Assembly and **R**esistance **A**nalysis) is a state-of-the-art and user-friendly Snakemake workflow designed for the analysis of WGS data. It integrates multiple bioinformatics tools and algorithms to facilitate key steps in WGS analysis, including quality control of sequencing reads, hybrid assembly, taxonomic classification, gene prediction and annotation as well as identification of plasmids and antibiotic resistance genes (ARGs).<br />
 
 ### Key Features

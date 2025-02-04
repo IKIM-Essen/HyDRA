@@ -3,7 +3,7 @@ from pathlib import Path
 
 rule prokka:
     input:
-        get_assembly,
+        "/local/work/julian/WIN-KID/2024_UKM/UKM_Subset/{sample}.fasta",  # Insert Path to testdata here
     output:
         faa=multiext("results/{date}/analysis/prokka/{sample}/{sample}.", "faa", "gff"),
     params:
@@ -93,6 +93,7 @@ else:
             "(cd {params.folder} && "
             "wget {params.download}) > {log} 2>&1"
 """
+
 # rgi load -i resources/card_db/card.json --local
 # rgi main -i results/test_115/analysis/prokka/ab_115/ab_115.faa -o results/test_115/analysis/rgi_115.out -t protein -a DIAMOND -d wgs --clean --local
 
