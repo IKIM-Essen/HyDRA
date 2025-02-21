@@ -1,11 +1,14 @@
 from pathlib import Path
 
-
+# TODO Copy files to working dir first
 rule prokka:
     input:
-        "/local/work/julian/WIN-KID/2024_UKM/UKM_Subset/{sample}.fasta",  # Insert Path to testdata here
+        # Insert Path to testdata here
+        local("/groups/ds/Win-KID/UKM_Subset/{sample}.fasta"),
     output:
-        faa=multiext("results/{date}/analysis/prokka/{sample}/{sample}.", "faa", "gff"),
+        faa=local(
+            multiext("results/{date}/analysis/prokka/{sample}/{sample}.", "faa", "gff")
+        ),
     params:
         outdir=lambda wildcards, output: Path(output.faa[0]).parent,
     log:
@@ -16,7 +19,7 @@ rule prokka:
     shell:
         "prokka --outdir {params.outdir}/ --force "
         "--prefix {wildcards.sample} --cpus {threads} "
-        "{input} > {log} 2>&1"
+        "{input} > {log} 2
         #--quiet
 
 
@@ -63,7 +66,7 @@ if config["card"]["data"]["use_local"]:
             json=get_card_db_file(),
         params:
             local=config["card"]["data"]["local_path"],
-            folder=lambda wildcards, output: Path(output.json).parent,
+            folder=local(lambda wildcards, output: Path(output.json).parent),
             tar_name=get_card_tar_file(),
         log:
             "logs/CARD_data_local_copy.log",
@@ -113,12 +116,12 @@ rule CARD_load_DB:
 
 rule CARD_run:
     input:
-        faa=rules.prokka.output.faa[0],
-        db=rules.CARD_load_DB.output,
+        faa=local(rules.prokka.output.faa[0]),
+        db=local(rules.CARD_load_DB.output),
     output:
         txt="results/{date}/analysis/card/{sample}/{sample}.txt",
     params:
-        path_wo_ext=lambda wildcards, output: Path(output.txt).with_suffix(""),
+        path_wo_ext=lambda wildcards, output: local(Path(output.txt).with_suffix("")),
     log:
         "logs/{date}/analysis/card/{sample}.log",
     threads: 64

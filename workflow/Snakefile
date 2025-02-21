@@ -18,11 +18,12 @@ include: "rules/assembly_qc.smk"
 
 rule all:
     input:
-        expand(
-            "results/{date}/analysis/prokka/{sample}/{sample}.faa",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
+        #TODO: only generate .faa instead of all prokka files
+        # expand(
+        #     "results/{date}/analysis/prokka/{sample}/{sample}.faa",
+        #     date=get_run_date(),
+        #     sample=get_samples(),
+        # ),
         expand(
             "results/{date}/analysis/card/{sample}/{sample}.txt",
             date=get_run_date(),

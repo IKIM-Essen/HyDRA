@@ -115,7 +115,7 @@ def get_genomad_DB_file():
 
 def get_card_db_file():
     name = config["card"]["data"]["dbfile"]
-    path = "{}CARD_db/{}".format(get_resource_path(), name)
+    path = local("{}CARD_db/{}".format(get_resource_path(), name))
     return path
 
 
