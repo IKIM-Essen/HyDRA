@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 # TODO Copy files to working dir first
 rule prokka:
     input:
@@ -19,7 +20,7 @@ rule prokka:
     shell:
         "prokka --outdir {params.outdir}/ --force "
         "--prefix {wildcards.sample} --cpus {threads} "
-        "{input} > {log} 2
+        "{input} > {log} 2"
         #--quiet
 
 
