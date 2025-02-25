@@ -4,8 +4,7 @@ from pathlib import Path
 # TODO Copy files to working dir first
 rule prokka:
     input:
-        # Insert Path to testdata here
-        local("/groups/ds/Win-KID/UKM_Subset/{sample}.fasta"),
+        rules.copy_fasta_assembled.output,
     output:
         faa=local(
             multiext("results/{date}/analysis/prokka/{sample}/{sample}.", "faa", "gff")
@@ -120,7 +119,7 @@ rule CARD_run:
         faa=local(rules.prokka.output.faa[0]),
         db=local(rules.CARD_load_DB.output),
     output:
-        txt="results/{date}/analysis/card/{sample}/{sample}.txt",
+        txt="results/{date}/analysis/card/{sample}.txt",
     params:
         path_wo_ext=lambda wildcards, output: local(Path(output.txt).with_suffix("")),
     log:

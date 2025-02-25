@@ -25,7 +25,7 @@ rule all:
         #     sample=get_samples(),
         # ),
         expand(
-            "results/{date}/analysis/card/{sample}/{sample}.txt",
+            "results/{date}/analysis/card/{sample}.txt",
             date=get_run_date(),
             sample=get_samples(),
         ),

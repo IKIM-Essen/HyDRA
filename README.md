@@ -7,11 +7,10 @@
 **This version has been modified so that it can process already assembled genomes**
 - The complete HyDRA range of functions is not available
 - Only CARD and prokka annotation of already assembled genomes will be generated
-- Be careful with large amounts of data, as the fasta files are not copied to the working dir first as they should be
 
 ### How to Use
 1. Add filenames (without endings) of fasta files to `/HyDRA/config/pep/samples.csv` -> `sample_name`. The other columns of the table will be ignored.
-2. Set path of the fasta files at  `/HyDRA/workflow/rules/analysis.smk` -> `prokka` -> `input`
+2. Set path of the fasta files at  `/HyDRA/workflow/rules/local_data.smk` -> `copy_fasta_assembled` -> `input`
 3. Set `run_date` at `/HyDRA/config/config.yaml`
 4. Run `nice srun --time 08:00:00 snakemake --use-conda --local-cores 16 --jobs 10 --default-resources runtime=60` in the terminal
 5. Retrieve results in the `/HyDRA/results` folder

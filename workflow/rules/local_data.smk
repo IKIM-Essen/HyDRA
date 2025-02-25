@@ -47,3 +47,25 @@ if get_has_long_reads():
             "(cd {params.indir} && "
             "tar cpfz - {params.infile}) | "
             "(cd {params.outdir} ; tar xpfz - )) > {log} 2>&1"
+
+
+rule copy_fasta_assembled:
+    input:
+        # Insert Path to testdata here
+        fasta=local("/groups/ds/Win-KID/Fastas/{sample}.fasta"),
+    output:
+        fasta="{{date}}/{{sample}}.fasta".format(get_data_path_ill()),
+    params:
+        indir=lambda wildcards, input: Path(input.fasta).parent,
+        infile=lambda wildcards, input: Path(input.fasta).name,
+        outdir=lambda wildcards, output: Path(output.fasta).parent,
+    log:
+        "logs/{date}/copy_data/{sample}_ass.log",
+    threads: 64
+    conda:
+        "../envs/unix.yaml"
+    shell:
+        "(mkdir -p {params.outdir} && "
+        "(cd {params.indir} && "
+        "tar cpfz - {params.infile}) | "
+        "(cd {params.outdir} ; tar xpfz - )) > {log} 2>&1"
