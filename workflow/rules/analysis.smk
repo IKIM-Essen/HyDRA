@@ -4,7 +4,7 @@ from pathlib import Path
 # TODO Copy files to working dir first
 rule prokka:
     input:
-        rules.copy_fasta_assembled.output,
+        local(rules.copy_fasta_assembled.output),
     output:
         faa=local(
             multiext("results/{date}/analysis/prokka/{sample}/{sample}.", "faa", "gff")
@@ -135,7 +135,7 @@ rule CARD_run:
 
 rule clone_plm_arg:
     output:
-        main=get_plm_arg_main(),
+        main=local(get_plm_arg_main()),
         dummy=touch("logs/clone_plm_arg.done"),
     log:
         "logs/plm_arg_clone.log",
@@ -155,7 +155,7 @@ if config["plm_arg"]["model"]["use_local"]:
         input:
             rules.clone_plm_arg.output.dummy,
         output:
-            model=get_plm_arg_model_file(),
+            model=local(get_plm_arg_model_file()),
         params:
             local=config["plm_arg"]["model"]["local_path"],
             folder=lambda wildcards, output: Path(output.model).parent,
@@ -172,7 +172,7 @@ else:
         input:
             rules.clone_plm_arg.output.dummy,
         output:
-            model=get_plm_arg_model_file(),
+            model=local(get_plm_arg_model_file()),
         params:
             download=config["plm_arg"]["model"]["url"],
             folder=lambda wildcards, output: Path(output.model).parent,
@@ -208,7 +208,7 @@ else:
         input:
             rules.clone_plm_arg.output.dummy,
         output:
-            reg=get_plm_arg_regression_file(),
+            reg=local(get_plm_arg_regression_file()),
         params:
             download=config["plm_arg"]["regression"]["url"],
             folder=lambda wildcards, output: Path(output.reg).parent,
@@ -223,18 +223,18 @@ else:
 
 rule run_plm_arg:
     input:
-        model=get_plm_arg_model_file(),
-        reg=get_plm_arg_regression_file(),
-        main=get_plm_arg_main(),
+        model=local(get_plm_arg_model_file()),
+        reg=local(get_plm_arg_regression_file()),
+        main=local(get_plm_arg_main()),
         fasta=rules.prokka.output.faa[0],
     output:
-        tsv="results/{date}/analysis/plm_arg/{sample}/{sample}.tsv",
+        tsv=local("results/{date}/analysis/plm_arg/{sample}/{sample}.tsv"),
     params:
         folder=lambda wildcards, input: Path(input.main).parent,
         main=lambda wildcards, input: Path(input.main).name,
-        root=get_root(),
+        root=local(get_root()),
     log:
-        "logs/{date}/analysis/plm_arg/{sample}.log",
+        local("logs/{date}/analysis/plm_arg/{sample}.log"),
     threads: 30
     conda:
         "../envs/plm_arg.yaml"
@@ -246,7 +246,7 @@ rule run_plm_arg:
 
 rule extract_plm_arg_results:
     input:
-        tsv=rules.run_plm_arg.output.tsv,
+        tsv=local(rules.run_plm_arg.output.tsv),
     output:
         arg="results/{date}/analysis/plm_arg/{sample}/{sample}_arg.csv",
         non_arg="results/{date}/analysis/plm_arg/{sample}/{sample}_non_arg.csv",

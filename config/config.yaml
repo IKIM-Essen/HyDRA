@@ -14,6 +14,7 @@ data_handling:
   data:
     ont: "data/ont/"
     illumina: "data/illumina/"
+    assembled: "data/assembled/"
 
 adapter_seqs: "-a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG -g GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG"
 

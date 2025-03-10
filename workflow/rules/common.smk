@@ -58,6 +58,10 @@ def get_ont_fastq(wildcards):
     return pep.sample_table.loc[wildcards.sample]["long"]
 
 
+def get_ass_fasta(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["assembly"]
+
+
 def get_adapters():
     return config["adapter_seqs"]
 
@@ -94,7 +98,7 @@ def get_multiqc_input(wildcards):
 
 
 def get_assembly(wildcards):
-    return "results/{date}/assembly/{sample}/assembly.fasta"
+    return local("results/{date}/assembly/{sample}/assembly.fasta")
 
 
 def get_checkm2_db():
@@ -148,4 +152,4 @@ def get_plm_arg_model_file():
 def get_plm_arg_regression_file():
     name = (config["plm_arg"]["regression"]["url"]).split("/")[-1]
     path = "{0}{1}".format(get_plm_arg_model_path(), name)
-    return path
+    return local(path)

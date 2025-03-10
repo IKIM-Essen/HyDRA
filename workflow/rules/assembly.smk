@@ -53,6 +53,12 @@ elif ASSEMBLY_TYPE == "long":
             "v3.10.2/bio/unicycler"
 
 
+# TODO: add none
+# elif ASSEMBLY_TYPE == "none":
+
+#     rule skip_assembly:
+
+
 rule assembly_gz:
     input:
         get_assembly,

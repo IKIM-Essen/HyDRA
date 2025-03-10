@@ -57,7 +57,7 @@ rule checkm2_run:
 rule quast:
     input:
         fasta=get_assembly,
-        gff=rules.prokka.output.faa[1],
+        gff=local(rules.prokka.output.faa[1]),
     output:
         multiext(
             "results/{date}/qc/quast/{sample}/report.",
