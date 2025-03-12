@@ -49,23 +49,23 @@ if get_has_long_reads():
             "(cd {params.outdir} ; tar xpfz - )) > {log} 2>&1"
 
 
-rule copy_fasta_assembled:
-    input:
-        #TODO: Try this:
-        # fasta=local(get_ass_fasta),
-        fasta=local("/local/work/julian/hydraAssembled/HyDRA/testData/1710491631.fa.gz"),
-    output:
-        fasta=local("results/{date}/assembly/{sample}/assembly.fasta"),
-    params:
-        indir=lambda wildcards, input: Path(input.fasta).parent,
-        infile=lambda wildcards, input: Path(input.fasta),
-        outfile=lambda wildcards, output: Path(output.fasta),
-        outdir=lambda wildcards, output: Path(output.fasta).parent,
-    log:
-        local("logs/{date}/copy_data/{sample}_ass.log"),
-    threads: 64
-    conda:
-        "../envs/unix.yaml"
-    shell:
-        "mkdir -p {params.outdir} && "
-        "gunzip -c {params.infile} > {params.outfile}"
+if get_is_already_assembled():
+
+    rule copy_fasta_assembled:
+        input:
+            fasta=local(get_ass_fasta),
+        output:
+            fasta=local("results/{date}/assembly/{sample}/assembly.fasta"),
+        params:
+            indir=lambda wildcards, input: Path(input.fasta).parent,
+            infile=lambda wildcards, input: Path(input.fasta),
+            outfile=lambda wildcards, output: Path(output.fasta),
+            outdir=lambda wildcards, output: Path(output.fasta).parent,
+        log:
+            local("logs/{date}/copy_data/{sample}_ass.log"),
+        threads: 64
+        conda:
+            "../envs/unix.yaml"
+        shell:
+            "mkdir -p {params.outdir} && "
+            "gunzip -c {params.infile} > {params.outfile}"

@@ -1,10 +1,9 @@
 from pathlib import Path
 
 
-# TODO Copy files to working dir first
 rule prokka:
     input:
-        local(rules.copy_fasta_assembled.output),
+        local(get_assembly),
     output:
         faa=local(
             multiext("results/{date}/analysis/prokka/{sample}/{sample}.", "faa", "gff")

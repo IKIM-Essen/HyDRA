@@ -6,8 +6,8 @@ pepfile: config/pep/config.yaml
 # date of analysis or project name
 run_date: "project"
 
-# choose between short, long or hybrid
-assembly_type: "hybrid"
+# choose between short, long, hybrid or none if already assembled
+assembly_type: "none"
 
 data_handling:
   resources: "resources/"

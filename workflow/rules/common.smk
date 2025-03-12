@@ -27,6 +27,13 @@ def get_has_long_reads():
         return False
 
 
+def get_is_already_assembled():
+    if get_assembly_type() in ["none"]:
+        return True
+    else:
+        return False
+
+
 def get_data_path_ill():
     return config["data_handling"]["data"]["illumina"]
 

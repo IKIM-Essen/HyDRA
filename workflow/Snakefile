@@ -16,6 +16,39 @@ include: "rules/analysis.smk"
 include: "rules/assembly_qc.smk"
 
 
+specific_output = list()
+
+if get_assembly_type() in ["hybrid", "short", "long"]:
+    specific_output.append(
+        expand("results/{date}/report/multiqc.html", date=get_run_date()),
+    ),
+    specific_output.append(
+        expand(
+            "results/{date}/out/assembly/{sample}.fa.gz",
+            date=get_run_date(),
+            sample=get_samples(),
+        ),
+    )
+
+if get_assembly_type() in ["short"]:
+    specific_output.append(
+        expand(
+            "results/{date}/report_prerequisites/assembly/{sample}_short_reads_mapped.txt",
+            date=get_run_date(),
+            sample=get_samples(),
+        )
+    )
+
+if get_assembly_type() in ["long"]:
+    specific_output.append(
+        expand(
+            "results/{date}/report_prerequisites/assembly/{sample}_long_reads_mapped.txt",
+            date=get_run_date(),
+            sample=get_samples(),
+        )
+    )
+
+
 rule all:
     input:
         expand(
@@ -28,25 +61,7 @@ rule all:
             date=get_run_date(),
             sample=get_samples(),
         ),
-        # # TODO: Shall be optional
-        # # expand("results/{date}/report/multiqc.html", date=get_run_date()),
-        # expand(
-        #     "results/{date}/out/assembly/{sample}.fa.gz",
-        #     date=get_run_date(),
-        #     sample=get_samples(),
-        # ),
-        # TODO: Shall be optional
-        # expand(
-        #     "results/{date}/report_prerequisites/assembly/{sample}_short_reads_mapped.txt",
-        #     date=get_run_date(),
-        #     sample=get_samples(),
-        # ),
-        # TODO: Shall be optional
-        # expand(
-        #     "results/{date}/report_prerequisites/assembly/{sample}_long_reads_mapped.txt",
-        #     date=get_run_date(),
-        #     sample=get_samples(),
-        # ),
+        specific_output,
         expand(
             "results/{date}/qc/checkm2/{sample}/quality_report.tsv",
             date=get_run_date(),
