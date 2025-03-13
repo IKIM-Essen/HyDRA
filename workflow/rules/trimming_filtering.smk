@@ -3,7 +3,7 @@ if get_has_short_reads():
 
     rule fastp:
         input:
-            sample=rules.copy_fastq_illumina.output.fastqs,
+            sample=local(rules.copy_fastq_illumina.output.fastqs),
         output:
             trimmed=temp(
                 [

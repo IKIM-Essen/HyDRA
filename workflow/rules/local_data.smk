@@ -3,11 +3,15 @@ if get_has_short_reads():
 
     rule copy_fastq_illumina:
         input:
-            fastqs=get_ill_fastqs,
+            fastqs=local(get_ill_fastqs),
         output:
             fastqs=[
-                "{0}{{date}}/{{sample}}_R1.fastq.gz".format(get_data_path_ill()),
-                "{0}{{date}}/{{sample}}_R2.fastq.gz".format(get_data_path_ill()),
+                local(
+                    "{0}{{date}}/{{sample}}_R1.fastq.gz".format(get_data_path_ill())
+                ),
+                local(
+                    "{0}{{date}}/{{sample}}_R2.fastq.gz".format(get_data_path_ill())
+                ),
             ],
         params:
             indir=lambda wildcards, input: Path(input.fastqs[0]).parent,

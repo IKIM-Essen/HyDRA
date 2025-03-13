@@ -25,9 +25,9 @@ elif ASSEMBLY_TYPE == "short":
     rule unicycler_short:
         input:
             # R1 and R2 short reads:
-            paired=rules.fastp.output.trimmed,
+            paired=local(rules.fastp.output.trimmed),
         output:
-            assembly=temp(get_assembly),
+            assembly=local("results/{date}/assembly/{sample}/assembly.fasta"),
         log:
             "logs/{date}/assembly/unicycler_short/{sample}.log",
         params:
@@ -43,7 +43,7 @@ elif ASSEMBLY_TYPE == "long":
             # Long reads:
             long=rules.chopper.output.trim_filt,
         output:
-            assembly=temp(get_assembly),
+            assembly=local("results/{date}/assembly/{sample}/assembly.fasta"),
         log:
             "logs/{date}/assembly/unicycler_long/{sample}.log",
         params:
@@ -51,12 +51,6 @@ elif ASSEMBLY_TYPE == "long":
         threads: 64
         wrapper:
             "v3.10.2/bio/unicycler"
-
-
-# TODO: add none
-# elif ASSEMBLY_TYPE == "none":
-
-#     rule skip_assembly:
 
 
 rule assembly_gz:
