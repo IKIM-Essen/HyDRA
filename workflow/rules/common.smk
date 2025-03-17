@@ -89,11 +89,13 @@ def get_multiqc_input(wildcards):
         )
 
     if get_has_long_reads():
-        long_in = expand(
-            [
-                "results/{{date}}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
-            ],
-            sample=get_samples(),
+        long_in = local(
+            expand(
+                [
+                    "results/{{date}}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
+                ],
+                sample=get_samples(),
+            )
         )
     if get_assembly_type() == "hybrid":
         short_in.extend(long_in)

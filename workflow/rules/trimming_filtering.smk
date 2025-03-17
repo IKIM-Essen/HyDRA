@@ -30,9 +30,9 @@ if get_has_long_reads():
 
     rule porechop_abi:
         input:
-            rules.copy_fastq_ont.output.fastq,
+            local(rules.copy_fastq_ont.output.fastq),
         output:
-            adapt_trim=temp("results/{date}/trimmed/porechop/{sample}.fastq.gz"),
+            adapt_trim=local(temp("results/{date}/trimmed/porechop/{sample}.fastq.gz")),
         log:
             "logs/{date}/ont/porechop/{sample}.log",  # chnage to qc/ont/
         threads: 32
@@ -46,9 +46,9 @@ if get_has_long_reads():
     # faster version of NanoFilt
     rule chopper:
         input:
-            rules.porechop_abi.output.adapt_trim,
+            local(rules.porechop_abi.output.adapt_trim),
         output:
-            trim_filt=temp("results/{date}/trimmed/chopper/{sample}.fastq.gz"),
+            trim_filt=local(temp("results/{date}/trimmed/chopper/{sample}.fastq.gz")),
         params:
             quality=config["quality_criteria"]["ont"]["min_quality"],
             minlen=config["quality_criteria"]["ont"]["min_length"],

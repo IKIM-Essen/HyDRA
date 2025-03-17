@@ -21,10 +21,12 @@ if get_has_long_reads():
 
     rule NanoPlot:
         input:
-            rules.chopper.output.trim_filt,
+            local(rules.chopper.output.trim_filt),
         output:
-            txt="results/{date}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
-            html="results/{date}/qc/nanoplot/{sample}/{sample}_NanoPlot-report.html",
+            txt=local("results/{date}/qc/nanoplot/{sample}/{sample}_NanoStats.txt"),
+            html=local(
+                "results/{date}/qc/nanoplot/{sample}/{sample}_NanoPlot-report.html"
+            ),
         params:
             outdir=lambda wildcards, output: Path(output.txt).parent,
             extra="--huge -f svg",
@@ -40,7 +42,7 @@ if get_has_long_reads():
 
 rule multiqc:
     input:
-        get_multiqc_input,
+        local(get_multiqc_input),
         config=get_multiqc_config(),
     output:
         "results/{date}/report/multiqc.html",

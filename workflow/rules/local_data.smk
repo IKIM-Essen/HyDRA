@@ -34,9 +34,9 @@ if get_has_long_reads():
 
     rule copy_fastq_ont:
         input:
-            fastq=get_ont_fastq,
+            fastq=local(get_ont_fastq),
         output:
-            fastq="{0}{{date}}/{{sample}}.fastq.gz".format(get_data_path_ont()),
+            fastq=local("{0}{{date}}/{{sample}}.fastq.gz".format(get_data_path_ont())),
         params:
             indir=lambda wildcards, input: Path(input.fastq).parent,
             infile=lambda wildcards, input: Path(input.fastq).name,
