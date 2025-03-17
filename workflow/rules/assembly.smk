@@ -11,7 +11,7 @@ if ASSEMBLY_TYPE == "hybrid":
             # Long reads:
             long=rules.chopper.output.trim_filt,
         output:
-            assembly=temp("results/{date}/assembly/{sample}/assembly.fasta"),
+            assembly=local("results/{date}/assembly/{sample}/assembly.fasta"),
         log:
             "logs/{date}/assembly/unicycler_hybrid/{sample}.log",
         params:
