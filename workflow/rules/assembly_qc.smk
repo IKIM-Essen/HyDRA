@@ -5,8 +5,8 @@ if config["checkm2_db"]["use_local"]:
 
     rule copy_local_checkM2_DB:
         output:
-            dbfile=get_checkm2_db(),
-            tar=temp(get_checkm2_tar()),
+            dbfile=local(get_checkm2_db()),
+            tar=local(get_checkm2_tar()),
         params:
             local=config["checkm2_db"]["local_path"],
             resource_folder=lambda wildcards, output: Path(output.dbfile).parent.parent,
@@ -22,7 +22,7 @@ else:
 
     rule checkm2_DB_download:
         output:
-            dbfile=get_checkm2_db(),
+            dbfile=local(get_checkm2_db()),
         params:
             direct=lambda wildcards, output: Path(output.dbfile).parent.parent,
         log:
@@ -36,7 +36,7 @@ else:
 rule checkm2_run:
     input:
         assembly=rules.assembly_gz.output.fa_gz,
-        dbfile=get_checkm2_db(),
+        dbfile=local(get_checkm2_db()),
     output:
         stats="results/{date}/qc/checkm2/{sample}/quality_report.tsv",
     params:

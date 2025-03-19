@@ -24,7 +24,7 @@ rule prokka:
 
 rule load_genomad_DB:
     output:
-        file=get_genomad_DB_file(),
+        file=local(get_genomad_DB_file()),
     params:
         folder=lambda wildcards, output: Path(output.file).parent.parent,
     log:
@@ -37,7 +37,7 @@ rule load_genomad_DB:
 
 rule genomad_run:
     input:
-        db=rules.load_genomad_DB.output.file,
+        db=local(rules.load_genomad_DB.output.file),
         asmbl=rules.assembly_gz.output.fa_gz,
     output:
         plasmid_tsv="results/{date}/analysis/genomad/{sample}/{sample}_summary/{sample}_plasmid_summary.tsv",
