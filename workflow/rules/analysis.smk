@@ -199,7 +199,7 @@ if config["plm_arg"]["regression"]["use_local"]:
         conda:
             "../envs/unix.yaml"
         shell:
-            "cp {params.local} {params.folder}/ > {log} 2>&1"
+            "sleep 120 && cp {params.local} {params.folder}/ > {log} 2>&1"
 
 else:
 
