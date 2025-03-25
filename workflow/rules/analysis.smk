@@ -16,9 +16,10 @@ rule prokka:
     conda:
         "../envs/prokka.yaml"
     shell:
-        "prokka --outdir {params.outdir}/ --force "
+        "prokka --centre C --outdir {params.outdir}/ --force "
         "--prefix {wildcards.sample} --cpus {threads} "
         "{input} > {log} 2"
+        # --centre C: https://github.com/tseemann/prokka/issues/135
         #--quiet
 
 
