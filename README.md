@@ -109,6 +109,14 @@ Make sure that all paths for the `assembly_type` specific files are also specifi
 
 The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=<owner>%2F<repo>).
 
+### Performance
+
+It can be useful to reduce the number of threads used for all rules:
+
+`snakemake --use-conda --cores all --max-threads 4`
+
+This depends heavily on the rules used.
+
 ## License
 
 HyDRA is released under the [BSD-2 Clause](https://www.open-xchange.com/hubfs/2_Clause_BSD_License.pdf?hsLang=en). Please review the license file for more details.
