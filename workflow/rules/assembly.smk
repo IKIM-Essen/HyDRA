@@ -15,10 +15,12 @@ if ASSEMBLY_TYPE == "hybrid":
         log:
             "logs/{date}/assembly/unicycler_hybrid/{sample}.log",
         params:
-            extra=" --min_fasta_length 500 ",
+            extra=" --min_fasta_length 500 --keep 0",
         threads: 64
+        resources:
+            mem_mb=1000
         wrapper:
-            "v3.10.2/bio/unicycler"
+            "v5.8.3/bio/unicycler"
 
 elif ASSEMBLY_TYPE == "short":
 
@@ -33,8 +35,10 @@ elif ASSEMBLY_TYPE == "short":
         params:
             extra="--min_fasta_length 300 --keep 0",
         threads: 64
+        resources:
+            mem_mb=1000
         wrapper:
-            "v3.10.2/bio/unicycler"
+            "v5.8.3/bio/unicycler"
 
 elif ASSEMBLY_TYPE == "long":
 
@@ -49,8 +53,10 @@ elif ASSEMBLY_TYPE == "long":
         params:
             extra="--min_fasta_length 300 --keep 0",
         threads: 64
+        resources:
+            mem_mb=1000
         wrapper:
-            "v3.10.2/bio/unicycler"
+            "v5.8.3/bio/unicycler"
 
 
 rule assembly_gz:
