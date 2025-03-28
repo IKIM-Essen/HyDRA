@@ -81,8 +81,8 @@ To prepare the workflow
 3. Provide a sample information in the `config/pep/samples.csv` file with keeping the header and format as `.csv`:
 
 ```
-sample_name,long,short1,short2
-sample1, path/to/your/long_read/fastq/sample1.fastq.gz,path/to/your/short_read /fastq/sample1_R1.fastq.gz,path/to/your/short_read /fastq/sample1_R2.fastq.gz
+sample_name,long,short1,short2,assembly
+sample1, path/to/your/long_read/fastq/sample1.fastq.gz, path/to/your/short_read/fastq/sample1_R1.fastq.gz, path/to/your/short_read/fastq/sample1_R2.fastq.gz, path/to/your/assembly/sample1.fna.gz
 ```
 
 ### Generate samples.csv
