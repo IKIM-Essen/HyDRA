@@ -10,6 +10,7 @@
 !config/pep
 !config/pep/config.yaml
 !config/pep/samples.csv
+!config/sample_file_generator.py
 !workflow
 !workflow/*
 !workflow/envs/*

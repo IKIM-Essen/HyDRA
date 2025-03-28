@@ -11,7 +11,7 @@ if ASSEMBLY_TYPE == "hybrid":
             # Long reads:
             long=rules.chopper.output.trim_filt,
         output:
-            assembly=temp("results/{date}/assembly/{sample}/assembly.fasta"),
+            assembly=local("results/{date}/assembly/{sample}/assembly.fasta"),
         log:
             "logs/{date}/assembly/unicycler_hybrid/{sample}.log",
         params:
@@ -27,9 +27,9 @@ elif ASSEMBLY_TYPE == "short":
     rule unicycler_short:
         input:
             # R1 and R2 short reads:
-            paired=rules.fastp.output.trimmed,
+            paired=local(rules.fastp.output.trimmed),
         output:
-            assembly=temp("results/{date}/assembly/{sample}/assembly.fasta"),
+            assembly=local("results/{date}/assembly/{sample}/assembly.fasta"),
         log:
             "logs/{date}/assembly/unicycler_short/{sample}.log",
         params:
@@ -45,9 +45,9 @@ elif ASSEMBLY_TYPE == "long":
     rule unicycler_long:
         input:
             # Long reads:
-            long=rules.chopper.output.trim_filt,
+            long=local(rules.chopper.output.trim_filt),
         output:
-            assembly=temp("results/{date}/assembly/{sample}/assembly.fasta"),
+            assembly=local("results/{date}/assembly/{sample}/assembly.fasta"),
         log:
             "logs/{date}/assembly/unicycler_long/{sample}.log",
         params:
@@ -96,8 +96,8 @@ if ASSEMBLY_TYPE in ["hybrid", "long"]:
     # returns number of primary mapped reads
     rule map_ont_to_assembly:
         input:
-            contigs=get_assembly,
-            fastq=rules.chopper.output.trim_filt,
+            contigs=local(get_assembly),
+            fastq=local(rules.chopper.output.trim_filt),
         output:
             aln="results/{date}/report_prerequisites/assembly/{sample}_long_reads_mapped.txt",
         threads: 64

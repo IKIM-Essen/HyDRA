@@ -27,6 +27,13 @@ def get_has_long_reads():
         return False
 
 
+def get_is_already_assembled():
+    if get_assembly_type() in ["none"]:
+        return True
+    else:
+        return False
+
+
 def get_data_path_ill():
     return config["data_handling"]["data"]["illumina"]
 
@@ -58,6 +65,10 @@ def get_ont_fastq(wildcards):
     return pep.sample_table.loc[wildcards.sample]["long"]
 
 
+def get_ass_fasta(wildcards):
+    return pep.sample_table.loc[wildcards.sample]["assembly"]
+
+
 def get_adapters():
     return config["adapter_seqs"]
 
@@ -78,11 +89,13 @@ def get_multiqc_input(wildcards):
         )
 
     if get_has_long_reads():
-        long_in = expand(
-            [
-                "results/{{date}}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
-            ],
-            sample=get_samples(),
+        long_in = local(
+            expand(
+                [
+                    "results/{{date}}/qc/nanoplot/{sample}/{sample}_NanoStats.txt",
+                ],
+                sample=get_samples(),
+            )
         )
     if get_assembly_type() == "hybrid":
         short_in.extend(long_in)
@@ -94,7 +107,7 @@ def get_multiqc_input(wildcards):
 
 
 def get_assembly(wildcards):
-    return "results/{date}/assembly/{sample}/assembly.fasta"
+    return local("results/{date}/assembly/{sample}/assembly.fasta")
 
 
 def get_checkm2_db():
@@ -115,7 +128,7 @@ def get_genomad_DB_file():
 
 def get_card_db_file():
     name = config["card"]["data"]["dbfile"]
-    path = "{}CARD_db/{}".format(get_resource_path(), name)
+    path = local("{}CARD_db/{}".format(get_resource_path(), name))
     return path
 
 
@@ -148,4 +161,4 @@ def get_plm_arg_model_file():
 def get_plm_arg_regression_file():
     name = (config["plm_arg"]["regression"]["url"]).split("/")[-1]
     path = "{0}{1}".format(get_plm_arg_model_path(), name)
-    return path
+    return local(path)
