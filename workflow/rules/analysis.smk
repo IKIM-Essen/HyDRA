@@ -121,7 +121,7 @@ rule CARD_run:
     output:
         txt="results/{date}/analysis/card/{sample}.txt",
     params:
-        path_wo_ext=lambda wildcards, output: local(Path(output.txt).with_suffix("")),
+        path_wo_ext=local(lambda wildcards, output: Path(output.txt).with_suffix("")),
     log:
         "logs/{date}/analysis/card/{sample}.log",
     threads: 64

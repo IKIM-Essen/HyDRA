@@ -30,7 +30,7 @@ if get_assembly_type() in ["hybrid", "short", "long"]:
         ),
     )
 
-if get_assembly_type() in ["short"]:
+if get_assembly_type() in ["short", "hybrid"]:
     specific_output.append(
         expand(
             "results/{date}/report_prerequisites/assembly/{sample}_short_reads_mapped.txt",
@@ -39,7 +39,7 @@ if get_assembly_type() in ["short"]:
         )
     )
 
-if get_assembly_type() in ["long"]:
+if get_assembly_type() in ["long", "hybrid"]:
     specific_output.append(
         expand(
             "results/{date}/report_prerequisites/assembly/{sample}_long_reads_mapped.txt",
