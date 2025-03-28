@@ -82,13 +82,13 @@ To prepare the workflow
 
 ```
 sample_name,long,short1,short2,assembly
-sample1, path/to/your/long_read/fastq/sample1.fastq.gz, path/to/your/short_read/fastq/sample1_R1.fastq.gz, path/to/your/short_read/fastq/sample1_R2.fastq.gz, path/to/your/assembly/sample1.fna.gz
+sample1,path/to/your/long_read/fastq/sample1.fastq.gz,path/to/your/short_read/fastq/sample1_R1.fastq.gz,path/to/your/short_read/fastq/sample1_R2.fastq.gz,path/to/your/assembly/sample1.fna.gz
 ```
 
 ### Generate samples.csv
 The `sample.csv` can also be generated instead of filling it manualy. Run the `config/sample_file_generator.py` python script to generate a sample.csv for all files in a folder. `folder_input`, `assembly_type_input` and `file_output` have to be set.  `assembly_type_input` can be set in exactly the same way as the `assembly_type` (see Settings).  Example:
 
-`python config/sample_file_generator.py  /path/to/short/read/data short config/pep/samples.csv`
+`python config/sample_file_generator.py /path/to/short/read/data short config/pep/samples.csv`
 
 Dependencies:
 - [os](https://docs.python.org/3/library/os.html)<br />
