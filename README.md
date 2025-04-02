@@ -108,10 +108,6 @@ Make sure that all paths for the `assembly_type` specific files are also specifi
 ### Run the workflow
 ```snakemake --use-conda --cores all ```
 
-### Run in slurm
-
-`nice srun --time 08:00:00 snakemake --use-conda --local-cores 16 --jobs 10 --default-resources runtime=60`
-
 The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=<owner>%2F<repo>).
 
 ### Performance
