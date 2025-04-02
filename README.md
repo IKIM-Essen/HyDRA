@@ -1,8 +1,7 @@
 # HyDRA – Hybrid *De novo* Assembly and Resistance Analysis
 
-[![Snakemake](https://img.shields.io/badge/snakemake-≥6.3.0-brightgreen.svg)](https://snakemake.github.io)
+[![Snakemake](https://img.shields.io/badge/snakemake-≥9.1.3-brightgreen.svg)](https://snakemake.github.io)
 [![GitHub actions status](https://github.com/<owner>/<repo>/workflows/Tests/badge.svg?branch=main)](https://github.com/<owner>/<repo>/actions?query=branch%3Amain+workflow%3ATests)
-
 
 HyDRA (**Hy**brid ***D**e novo* Assembly and **R**esistance **A**nalysis) is a state-of-the-art and user-friendly Snakemake workflow designed for the analysis of WGS data. It integrates multiple bioinformatics tools and algorithms to facilitate key steps in WGS analysis, including quality control of sequencing reads, hybrid assembly, taxonomic classification, gene prediction and annotation as well as identification of plasmids and antibiotic resistance genes (ARGs).<br />
 
@@ -82,13 +81,42 @@ To prepare the workflow
 3. Provide a sample information in the `config/pep/samples.csv` file with keeping the header and format as `.csv`:
 
 ```
-sample_name,long,short1,short2
-sample1, path/to/your/long_read/fastq/sample1.fastq.gz,path/to/your/short_read /fastq/sample1_R1.fastq.gz,path/to/your/short_read /fastq/sample1_R2.fastq.gz
+sample_name,long,short1,short2,assembly
+sample1,path/to/your/long_read/fastq/sample1.fastq.gz,path/to/your/short_read/fastq/sample1_R1.fastq.gz,path/to/your/short_read/fastq/sample1_R2.fastq.gz,path/to/your/assembly/sample1.fna.gz
 ```
+
+### Generate samples.csv
+The `sample.csv` can also be generated instead of filling it manualy. Run the `config/sample_file_generator.py` python script to generate a sample.csv for all files in a folder. `folder_input`, `assembly_type_input` and `file_output` have to be set.  `assembly_type_input` can be set in exactly the same way as the `assembly_type` (see Settings).  Example:
+
+`python config/sample_file_generator.py /path/to/short/read/data short config/pep/samples.csv`
+
+Dependencies:
+- [os](https://docs.python.org/3/library/os.html)<br />
+- [argparse](https://docs.python.org/3/library/argparse.html)<br />
+- [pandas](https://pandas.pydata.org/getting_started.html)<br />
+
+
+### Settings
+Set the `assembly_type` at `config/config.yaml` to change the used input files:
+- `short`: Assamble only with short reads
+- `long`: Assemble only with long reads
+- `hybrid`: Assemble with long and short reads
+- `none`: Assembly is skipped and Assembled files are already provided
+
+Make sure that all paths for the `assembly_type` specific files are also specified in `config/pep/samples.csv`
+
 ### Run the workflow
 ```snakemake --use-conda --cores all ```
 
 The usage of this workflow is described in the [Snakemake Workflow Catalog](https://snakemake.github.io/snakemake-workflow-catalog/?usage=<owner>%2F<repo>).
+
+### Performance
+
+It can be useful to reduce the number of threads used for all rules:
+
+`snakemake --use-conda --cores all --max-threads 4`
+
+This depends heavily on the rules used.
 
 ## License
 

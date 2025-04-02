@@ -3,4 +3,9 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - nanoplot = 1.42.0
+  - nanoplot = 1.43.0
+  # See https://github.com/wdecoster/NanoPlot/issues/400
+  - pandas = 2.2.2
+  - plotly = 5.22.0
+
+  
