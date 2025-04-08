@@ -39,24 +39,23 @@ if get_has_long_reads():
             "NanoPlot --fastq {input} --prefix {wildcards.sample}_ -t {threads} "
             "{params.extra} --outdir {params.outdir} > {log} 2>&1"
 
-
-rule NanoPlotRaw:
-    input:
-        local(rules.copy_fastq_ont.output.fastq),
-    output:
-        txt="results/{date}/qc/nanoplot/raw/{sample}/{sample}_NanoStats.txt",
-        html="results/{date}/qc/nanoplot/raw/{sample}/{sample}_NanoPlot-report.html",
-    params:
-        outdir=lambda wildcards, output: Path(output.txt).parent,
-        extra="--huge -f svg",
-    log:
-        "logs/{date}/ont/nanoplot/{sample}_raw.log",
-    threads: 20
-    conda:
-        "../envs/nanoplot.yaml"
-    shell:
-        "NanoPlot --fastq {input} --prefix {wildcards.sample}_ -t {threads} "
-        "{params.extra} --outdir {params.outdir} > {log} 2>&1"
+    rule NanoPlotRaw:
+        input:
+            local(rules.copy_fastq_ont.output.fastq),
+        output:
+            txt="results/{date}/qc/nanoplot/raw/{sample}/{sample}_NanoStats.txt",
+            html="results/{date}/qc/nanoplot/raw/{sample}/{sample}_NanoPlot-report.html",
+        params:
+            outdir=lambda wildcards, output: Path(output.txt).parent,
+            extra="--huge -f svg",
+        log:
+            "logs/{date}/ont/nanoplot/{sample}_raw.log",
+        threads: 20
+        conda:
+            "../envs/nanoplot.yaml"
+        shell:
+            "NanoPlot --fastq {input} --prefix {wildcards.sample}_ -t {threads} "
+            "{params.extra} --outdir {params.outdir} > {log} 2>&1"
 
 
 rule multiqc:

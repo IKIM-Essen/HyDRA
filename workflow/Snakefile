@@ -46,16 +46,18 @@ if get_assembly_type() in ["long", "hybrid"]:
             date=get_run_date(),
             sample=get_samples(),
         )
+    ),
+    specific_output.append(
+        expand(
+            "results/{date}/qc/nanoplot/raw/{sample}/{sample}_NanoStats.txt",
+            date=get_run_date(),
+            sample=get_samples(),
+        )
     )
 
 
 rule all:
     input:
-        expand(
-            "results/{date}/qc/nanoplot/raw/{sample}/{sample}_NanoStats.txt",
-            date=get_run_date(),
-            sample=get_samples(),
-        ),
         expand(
             "results/{date}/analysis/card/{sample}.txt",
             date=get_run_date(),
