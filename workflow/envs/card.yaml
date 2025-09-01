@@ -3,4 +3,4 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - rgi = 6.0.3
+  - rgi = 6.0.4

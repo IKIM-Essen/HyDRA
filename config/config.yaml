@@ -33,9 +33,9 @@ checkm2_db:
 
 card:
   data:
-    use_local: True
+    use_local: False
     dbfile: "card.json"
-    local_path: "/groups/ds/databases_refGenomes/databases/latest/card/broadstreet-v3.2.9.tar.bz2"
+    local_path: "/path/to/your/local/card/database.tar.bz2"
     url: "https://card.mcmaster.ca/latest/data"
 
 plm_arg:
