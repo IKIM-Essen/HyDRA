@@ -18,9 +18,31 @@ if ASSEMBLY_TYPE == "hybrid":
             extra=" --min_fasta_length 500 --keep 0",
         threads: 64
         resources:
-            mem_mb=1000
+            mem_mb=1000,
         wrapper:
             "v5.8.3/bio/unicycler"
+
+    rule spades_hybrid:
+        input:
+            # R1 and R2 short reads:
+            paired=rules.fastp.output.trimmed,
+            # Long reads:
+            long=rules.chopper.output.trim_filt,
+        output:
+            assembly=local("results/{date}/assembly_spades/{sample}/scaffolds.fasta"),
+        log:
+            "logs/{date}/assembly_spades/{sample}.log",
+        params:
+            outfolder=lambda wildcards, output: Path(output.assembly).parent,
+        # TODO: to ensure not 2 assemblies are running in parallel, tool itself is running with only 2 threads
+        threads: 60
+        resources:
+            mem_gb=80,
+        conda:
+            "../envs/spades.yaml"
+        shell:
+            "spades.py -1 {input.paired[0]} -2 {input.paired[1]} --nanopore {input.long} "
+            "-m {resources.mem_gb} -t 2 --isolate -o {params.outfolder} > {log} 2>&1"
 
 elif ASSEMBLY_TYPE == "short":
 
@@ -36,7 +58,7 @@ elif ASSEMBLY_TYPE == "short":
             extra="--min_fasta_length 300 --keep 0",
         threads: 64
         resources:
-            mem_mb=1000
+            mem_mb=1000,
         wrapper:
             "v5.8.3/bio/unicycler"
 
@@ -54,7 +76,7 @@ elif ASSEMBLY_TYPE == "long":
             extra="--min_fasta_length 300 --keep 0",
         threads: 64
         resources:
-            mem_mb=1000
+            mem_mb=1000,
         wrapper:
             "v5.8.3/bio/unicycler"
 

@@ -107,7 +107,11 @@ def get_multiqc_input(wildcards):
 
 
 def get_assembly(wildcards):
-    return local("results/{date}/assembly/{sample}/assembly.fasta")
+    assembler = config["assembler"]
+    if assembler == "spades":
+        return local("results/{date}/assembly_spades/{sample}/scaffolds.fasta")
+    else:
+        return local("results/{date}/assembly/{sample}/assembly.fasta")
 
 
 def get_checkm2_db():

@@ -7,7 +7,9 @@ pepfile: config/pep/config.yaml
 run_date: "project"
 
 # choose between short, long, hybrid or none if already assembled
-assembly_type: "none"
+assembly_type: "hybrid"
+# choose between unicycler and spades
+assembler: "spades"
 
 data_handling:
   resources: "resources/"
@@ -20,14 +22,14 @@ adapter_seqs: "-a TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG -g GTCTCGTGGGCTCGGAGATGTGTAT
 
 quality_criteria:
   illumina:
-    min_quality: 30
+    min_quality: 20
     min_length: 30
   ont:
     min_quality: 10
     min_length: 500
 
 checkm2_db:
-  use_local: True
+  use_local: False
   local_path: "/groups/ds/databases_refGenomes/databases/latest/checkM2/checkm2_database.tar.gz"
   db_file: "CheckM2_database/uniref100.KO.1.dmnd"
 

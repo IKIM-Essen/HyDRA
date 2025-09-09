@@ -5,7 +5,7 @@ if get_has_short_reads():
         input:
             sample=local(rules.copy_fastq_illumina.output.fastqs),
         output:
-            trimmed=temp(
+            trimmed=(
                 [
                     "results/{date}/trimmed/fastp/{sample}.1.fastq.gz",
                     "results/{date}/trimmed/fastp/{sample}.2.fastq.gz",
@@ -48,7 +48,7 @@ if get_has_long_reads():
         input:
             local(rules.porechop_abi.output.adapt_trim),
         output:
-            trim_filt=local(temp("results/{date}/trimmed/chopper/{sample}.fastq.gz")),
+            trim_filt=local(("results/{date}/trimmed/chopper/{sample}.fastq.gz")),
         params:
             quality=config["quality_criteria"]["ont"]["min_quality"],
             minlen=config["quality_criteria"]["ont"]["min_length"],

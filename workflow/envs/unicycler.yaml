@@ -3,5 +3,4 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - unicycler = 0.4.8
-
+  - unicycler = 0.5.1
